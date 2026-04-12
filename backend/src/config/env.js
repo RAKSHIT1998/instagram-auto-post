@@ -39,6 +39,7 @@ const envSchema = z.object({
 
   RAZORPAY_KEY: z.string().optional(),
   RAZORPAY_SECRET: z.string().optional(),
+  RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
 
   ML_SERVICE_URL: z.string().default("http://127.0.0.1:8000")
 });

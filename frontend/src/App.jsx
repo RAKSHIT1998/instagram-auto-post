@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
@@ -7,8 +7,9 @@ import Scheduled from "./pages/Scheduled";
 import Analytics from "./pages/Analytics";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
-import AdminDashboard from "./admin/AdminDashboard";
 import API from "./services/api";
+
+const AdminDashboard = lazy(() => import("./admin/AdminDashboard"));
 
 export default function App() {
   const isAdminPath = window.location.pathname.startsWith("/admin");
@@ -130,7 +131,11 @@ export default function App() {
         />
 
         <section className="p-4 md:p-8 max-w-6xl mx-auto">
-          {isAdminPath || page === "admin" ? <AdminDashboard /> : null}
+          {isAdminPath || page === "admin" ? (
+            <Suspense fallback={<div className="glass-card p-6 text-muted">Loading admin console...</div>}>
+              <AdminDashboard />
+            </Suspense>
+          ) : null}
           {!isAdminPath && page === "dashboard" ? <Dashboard stats={stats} onGoGenerate={() => setPage("generate")} /> : null}
           {!isAdminPath && page === "generate" ? <Generate onCreated={onCreated} /> : null}
           {!isAdminPath && page === "scheduled" ? <Scheduled refreshKey={refreshKey} onItemsLoaded={setItems} /> : null}

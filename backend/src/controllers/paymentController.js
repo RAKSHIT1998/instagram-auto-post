@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import Razorpay from "razorpay";
 import { z } from "zod";
 import { env } from "../config/env.js";
@@ -20,6 +21,26 @@ const webhookSchema = z.object({
 function getRazorpayClient() {
   if (!env.RAZORPAY_KEY || !env.RAZORPAY_SECRET) return null;
   return new Razorpay({ key_id: env.RAZORPAY_KEY, key_secret: env.RAZORPAY_SECRET });
+}
+
+function verifyWebhookSignature(req) {
+  if (!env.RAZORPAY_WEBHOOK_SECRET) return true;
+
+  const incoming = req.headers["x-razorpay-signature"];
+  const signature = Array.isArray(incoming) ? incoming[0] : incoming;
+  if (!signature) return false;
+
+  const rawPayload = req.rawBody || JSON.stringify(req.body || {});
+  const expected = crypto
+    .createHmac("sha256", env.RAZORPAY_WEBHOOK_SECRET)
+    .update(rawPayload)
+    .digest("hex");
+
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signature);
+  if (a.length !== b.length) return false;
+
+  return crypto.timingSafeEqual(a, b);
 }
 
 export async function createSubscriptionOrder(req, res, next) {
@@ -75,6 +96,10 @@ export async function activateProPlan(req, res, next) {
 
 export async function handleWebhook(req, res, next) {
   try {
+    if (!verifyWebhookSignature(req)) {
+      return res.status(401).json({ message: "Invalid webhook signature" });
+    }
+
     const body = webhookSchema.parse(req.body);
     const user = await User.findById(body.userId);
 
