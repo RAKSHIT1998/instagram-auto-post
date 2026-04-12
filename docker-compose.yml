@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./backend/.env
+    environment:
+      RUN_EMBEDDED_WORKER: "false"
+      RUN_SCHEDULER: "false"
+      RUN_ANALYTICS_CRON: "false"
+      MONGO_URI: mongodb://mongo:27017/social_ai
+      REDIS_URL: redis://redis:6379
+      ML_SERVICE_URL: http://ml:8000
+    depends_on:
+      - redis
+      - mongo
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+    env_file:
+      - ./backend/.env
+    environment:
+      MONGO_URI: mongodb://mongo:27017/social_ai
+      REDIS_URL: redis://redis:6379
+      ML_SERVICE_URL: http://ml:8000
+    depends_on:
+      - redis
+      - mongo
+
+  ml:
+    build:
+      context: ./ml-service
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      VITE_API_BASE: http://localhost:5000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  redis:
+    image: redis:7
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"

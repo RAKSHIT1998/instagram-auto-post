@@ -1,0 +1,119 @@
+services:
+  - type: web
+    name: ai-social-backend
+    runtime: node
+    rootDir: backend
+    plan: starter
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: RUN_EMBEDDED_WORKER
+        value: "false"
+      - key: RUN_SCHEDULER
+        value: "false"
+      - key: RUN_ANALYTICS_CRON
+        value: "false"
+      - key: MONGO_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: HF_API_KEY
+        sync: false
+      - key: HF_TEXT_MODEL
+        value: mistralai/Mistral-7B-Instruct-v0.2
+      - key: HF_FALLBACK_TEXT_MODEL
+        value: meta-llama/Llama-3.1-8B-Instruct
+      - key: HF_IMAGE_MODEL
+        value: stabilityai/stable-diffusion-xl-base-1.0
+      - key: META_API_VERSION
+        value: v22.0
+      - key: IG_USER_ID
+        sync: false
+      - key: META_ACCESS_TOKEN
+        sync: false
+      - key: FB_PAGE_ID
+        sync: false
+      - key: X_API_BASE
+        value: https://api.x.com/2
+      - key: TWITTER_TOKEN
+        sync: false
+      - key: LINKEDIN_API_BASE
+        value: https://api.linkedin.com/v2
+      - key: LINKEDIN_TOKEN
+        sync: false
+      - key: LINKEDIN_URN
+        sync: false
+      - key: RAZORPAY_KEY
+        sync: false
+      - key: RAZORPAY_SECRET
+        sync: false
+      - key: ML_SERVICE_URL
+        sync: false
+
+  - type: worker
+    name: ai-social-worker
+    runtime: node
+    rootDir: backend
+    plan: starter
+    buildCommand: npm ci
+    startCommand: npm run worker
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: HF_API_KEY
+        sync: false
+      - key: HF_TEXT_MODEL
+        value: mistralai/Mistral-7B-Instruct-v0.2
+      - key: HF_FALLBACK_TEXT_MODEL
+        value: meta-llama/Llama-3.1-8B-Instruct
+      - key: HF_IMAGE_MODEL
+        value: stabilityai/stable-diffusion-xl-base-1.0
+      - key: META_API_VERSION
+        value: v22.0
+      - key: IG_USER_ID
+        sync: false
+      - key: META_ACCESS_TOKEN
+        sync: false
+      - key: FB_PAGE_ID
+        sync: false
+      - key: X_API_BASE
+        value: https://api.x.com/2
+      - key: TWITTER_TOKEN
+        sync: false
+      - key: LINKEDIN_API_BASE
+        value: https://api.linkedin.com/v2
+      - key: LINKEDIN_TOKEN
+        sync: false
+      - key: LINKEDIN_URN
+        sync: false
+      - key: ML_SERVICE_URL
+        sync: false
+
+  - type: web
+    name: ai-social-ml
+    runtime: python
+    rootDir: ml-service
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+
+  - type: static
+    name: ai-social-frontend
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    publishPath: dist
+    envVars:
+      - key: VITE_API_BASE
+        sync: false
