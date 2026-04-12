@@ -1,0 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-bg text-text font-sans;
+  scroll-behavior: smooth;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.18), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(6, 182, 212, 0.12), transparent 40%);
+}
+
+#root {
+  @apply min-h-screen;
+}
+
+.glass-card {
+  @apply bg-card/80 border border-white/10 backdrop-blur-md rounded-2xl shadow-[0_10px_30px_rgba(2,6,23,0.4)];
+}
+
+.gradient-btn {
+  @apply bg-gradient-to-r from-accent to-cyan text-white font-semibold px-5 py-2.5 rounded-xl shadow-glow transition-all duration-200 hover:opacity-95 hover:scale-[1.01];
+}
+
+.input-dark {
+  @apply w-full rounded-xl border border-white/10 bg-card/70 px-4 py-3 text-text outline-none focus:border-accent;
+}

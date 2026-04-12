@@ -1,0 +1,139 @@
+import { useEffect, useMemo, useState } from "react";
+import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
+import Dashboard from "./pages/Dashboard";
+import Generate from "./pages/Generate";
+import Scheduled from "./pages/Scheduled";
+import Analytics from "./pages/Analytics";
+import Landing from "./pages/Landing";
+import Onboarding from "./pages/Onboarding";
+import API from "./services/api";
+
+export default function App() {
+  const [page, setPage] = useState("dashboard");
+  const [view, setView] = useState("landing");
+  const [user, setUser] = useState(null);
+  const [integrationStatus, setIntegrationStatus] = useState(null);
+  const [items, setItems] = useState([]);
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  async function loadMeAndStatus() {
+    try {
+      const me = await API.get("/auth/me");
+      setUser(me.data);
+
+      const status = await API.get("/integrations/status");
+      setIntegrationStatus(status.data);
+      setView(status.data?.allConnected ? "app" : "onboarding");
+    } catch {
+      localStorage.removeItem("token");
+      setUser(null);
+      setIntegrationStatus(null);
+      setView("landing");
+    }
+  }
+
+  async function loadPosts() {
+    if (!localStorage.getItem("token")) return;
+    try {
+      const { data } = await API.get("/posts/mine");
+      setItems(Array.isArray(data) ? data : []);
+    } catch {
+      setItems([]);
+    }
+  }
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      loadMeAndStatus();
+      loadPosts();
+    }
+  }, []);
+
+  async function registerDemo() {
+    setRegisterLoading(true);
+    try {
+      const email = `user${Date.now()}@demo.com`;
+      const { data } = await API.post("/auth/register", {
+        name: "Demo User",
+        email,
+        password: "password123"
+      });
+
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      await loadMeAndStatus();
+      setPage("generate");
+    } finally {
+      setRegisterLoading(false);
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("token");
+    setUser(null);
+    setIntegrationStatus(null);
+    setItems([]);
+    setView("landing");
+  }
+
+  const stats = useMemo(() => {
+    return {
+      totalPosts: items.length,
+      posted: items.filter((i) => i.status === "posted").length,
+      pending: items.filter((i) => i.status === "pending" || i.status === "queued").length,
+      failed: items.filter((i) => i.status === "failed").length
+    };
+  }, [items]);
+
+  function onCreated(payload) {
+    if (Array.isArray(payload?.platformPosts)) {
+      setItems(payload.platformPosts.concat(items));
+    }
+    setRefreshKey((k) => k + 1);
+    setPage("scheduled");
+  }
+
+  if (view === "landing") {
+    return <Landing onStartDemo={registerDemo} />;
+  }
+
+  if (view === "onboarding") {
+    return (
+      <Onboarding
+        status={integrationStatus}
+        onRefresh={loadMeAndStatus}
+        onDone={() => {
+          setView("app");
+          setPage("dashboard");
+        }}
+      />
+    );
+  }
+
+  return (
+    <div className="min-h-screen flex">
+      <Sidebar page={page} onChange={setPage} />
+
+      <main className="flex-1">
+        <Navbar
+          user={user}
+          onRegisterDemo={registerDemo}
+          loading={registerLoading}
+          onLogout={logout}
+          onOpenOnboarding={() => setView("onboarding")}
+        />
+
+        <section className="p-4 md:p-8 max-w-6xl mx-auto">
+          {page === "dashboard" ? <Dashboard stats={stats} onGoGenerate={() => setPage("generate")} /> : null}
+          {page === "generate" ? <Generate onCreated={onCreated} /> : null}
+          {page === "scheduled" ? <Scheduled refreshKey={refreshKey} onItemsLoaded={setItems} /> : null}
+          {page === "analytics" ? <Analytics items={items} /> : null}
+        </section>
+      </main>
+    </div>
+  );
+}

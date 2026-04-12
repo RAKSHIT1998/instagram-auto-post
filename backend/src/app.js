@@ -9,6 +9,8 @@ import publishRoutes from "./routes/publishRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import waitlistRoutes from "./routes/waitlistRoutes.js";
+import integrationRoutes from "./routes/integrationRoutes.js";
 import { initPublishWorker } from "./queue/publishQueue.js";
 import { startScheduler } from "./jobs/scheduler.js";
 import { startAnalyticsCollector } from "./jobs/analyticsCollector.js";
@@ -29,6 +31,8 @@ app.use("/api/publish", publishRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/waitlist", waitlistRoutes);
+app.use("/api/integrations", integrationRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
