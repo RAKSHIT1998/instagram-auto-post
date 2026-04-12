@@ -15,6 +15,9 @@ export function startAnalyticsCollector() {
       const metrics = await fetchMetrics(post);
       const score = calcScore(metrics);
 
+       post.metrics = metrics;
+       await post.save();
+
       await Analytics.create({
         postId: post.postId,
         platformPostId: post._id,

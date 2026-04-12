@@ -11,6 +11,7 @@ import postRoutes from "./routes/postRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import waitlistRoutes from "./routes/waitlistRoutes.js";
 import integrationRoutes from "./routes/integrationRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import { initPublishWorker } from "./queue/publishQueue.js";
 import { startScheduler } from "./jobs/scheduler.js";
 import { startAnalyticsCollector } from "./jobs/analyticsCollector.js";
@@ -33,6 +34,7 @@ app.use("/api/posts", postRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/waitlist", waitlistRoutes);
 app.use("/api/integrations", integrationRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

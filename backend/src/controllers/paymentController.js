@@ -11,6 +11,12 @@ const activateSchema = z.object({
   paymentId: z.string().min(4)
 });
 
+const webhookSchema = z.object({
+  userId: z.string().min(6),
+  amount: z.number().nonnegative(),
+  plan: z.enum(["pro", "agency"]).default("pro")
+});
+
 function getRazorpayClient() {
   if (!env.RAZORPAY_KEY || !env.RAZORPAY_SECRET) return null;
   return new Razorpay({ key_id: env.RAZORPAY_KEY, key_secret: env.RAZORPAY_SECRET });
@@ -48,6 +54,11 @@ export async function activateProPlan(req, res, next) {
       req.user.sub,
       {
         plan: "pro",
+        subscription: {
+          status: "active",
+          amount: 999,
+          startedAt: new Date()
+        },
         postsUsedThisMonth: 0,
         billingCycleStart: new Date(),
         lastPaymentId: body.paymentId
@@ -57,6 +68,31 @@ export async function activateProPlan(req, res, next) {
 
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function handleWebhook(req, res, next) {
+  try {
+    const body = webhookSchema.parse(req.body);
+    const user = await User.findById(body.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.subscription = {
+      status: "active",
+      amount: body.amount,
+      startedAt: new Date()
+    };
+    user.plan = body.plan;
+    user.postsUsedThisMonth = 0;
+    user.billingCycleStart = new Date();
+
+    await user.save();
+    res.send("OK");
   } catch (error) {
     next(error);
   }

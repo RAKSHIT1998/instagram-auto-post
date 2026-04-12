@@ -26,7 +26,16 @@ const PlatformPostSchema = new mongoose.Schema(
     scheduledAt: { type: Date, index: true },
     publishedAt: Date,
     externalPostId: String,
-    error: String
+    error: String,
+    metrics: {
+      likes: { type: Number, default: 0 },
+      comments: { type: Number, default: 0 },
+      shares: { type: Number, default: 0 },
+      saves: { type: Number, default: 0 },
+      impressions: { type: Number, default: 0 },
+      clicks: { type: Number, default: 0 },
+      retweets: { type: Number, default: 0 }
+    }
   },
   { timestamps: true }
 );

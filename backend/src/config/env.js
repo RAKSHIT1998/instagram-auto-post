@@ -10,6 +10,7 @@ const envSchema = z.object({
   MONGO_URI: z.string().optional(),
   REDIS_URL: z.string().default("redis://127.0.0.1:6379"),
   JWT_SECRET: z.string().default("supersecret"),
+  ADMIN_EMAIL: z.string().optional(),
   RUN_EMBEDDED_WORKER: z.coerce.boolean().default(true),
   RUN_SCHEDULER: z.coerce.boolean().default(true),
   RUN_ANALYTICS_CRON: z.coerce.boolean().default(true),

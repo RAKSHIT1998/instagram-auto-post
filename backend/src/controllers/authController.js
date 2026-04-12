@@ -20,7 +20,8 @@ function sign(user) {
     {
       sub: user._id.toString(),
       email: user.email,
-      plan: user.plan
+      plan: user.plan,
+      role: user.role
     },
     env.JWT_SECRET,
     { expiresIn: "7d" }
@@ -39,11 +40,18 @@ export async function register(req, res, next) {
     const user = await User.create({
       name: body.name,
       email: body.email.toLowerCase(),
-      passwordHash
+      passwordHash,
+      role:
+        env.ADMIN_EMAIL && env.ADMIN_EMAIL.toLowerCase() === body.email.toLowerCase()
+          ? "admin"
+          : "user"
     });
 
     const token = sign(user);
-    res.status(201).json({ token, user: { id: user._id, name: user.name, email: user.email, plan: user.plan } });
+    res.status(201).json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, plan: user.plan, role: user.role }
+    });
   } catch (error) {
     next(error);
   }
@@ -59,7 +67,7 @@ export async function login(req, res, next) {
     if (!ok) return res.status(401).json({ message: "Invalid credentials" });
 
     const token = sign(user);
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email, plan: user.plan } });
+    res.json({ token, user: { id: user._id, name: user.name, email: user.email, plan: user.plan, role: user.role } });
   } catch (error) {
     next(error);
   }
@@ -67,7 +75,9 @@ export async function login(req, res, next) {
 
 export async function me(req, res, next) {
   try {
-    const user = await User.findById(req.user.sub).select("name email plan postsUsedThisMonth billingCycleStart");
+    const user = await User.findById(req.user.sub).select(
+      "name email plan role postsUsedThisMonth billingCycleStart subscription"
+    );
     if (!user) return res.status(404).json({ message: "User not found" });
     res.json(user);
   } catch (error) {
