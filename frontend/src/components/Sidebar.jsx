@@ -7,7 +7,11 @@ const items = [
   { key: "analytics", label: "Analytics", icon: BarChart3 }
 ];
 
-export default function Sidebar({ page, onChange }) {
+export default function Sidebar({ page, onChange, isAdmin }) {
+  const renderedItems = isAdmin
+    ? items.concat([{ key: "admin", label: "Admin Console", icon: BarChart3 }])
+    : items;
+
   return (
     <aside className="hidden md:flex w-72 min-h-screen border-r border-white/10 bg-card/70 backdrop-blur-md p-6 flex-col">
       <h1 className="text-2xl font-extrabold bg-gradient-to-r from-accent to-cyan bg-clip-text text-transparent mb-10">
@@ -15,7 +19,7 @@ export default function Sidebar({ page, onChange }) {
       </h1>
 
       <nav className="space-y-2">
-        {items.map((item) => {
+        {renderedItems.map((item) => {
           const Icon = item.icon;
           const active = page === item.key;
           return (
