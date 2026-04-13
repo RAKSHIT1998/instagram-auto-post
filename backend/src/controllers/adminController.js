@@ -1,8 +1,19 @@
 import User from "../models/User.js";
 import PlatformPost from "../models/PlatformPost.js";
 
-export async function getMRR(_req, res, next) {
+function ensureAdmin(req, res) {
+  if (!req.user || req.user.role !== "admin") {
+    res.status(403).json({ message: "Admin access required" });
+    return false;
+  }
+
+  return true;
+}
+
+export async function getMRR(req, res, next) {
   try {
+    if (!ensureAdmin(req, res)) return;
+
     const users = await User.find({ "subscription.status": "active" });
     const mrr = users.reduce((sum, u) => sum + Number(u.subscription?.amount || 0), 0);
 
@@ -15,8 +26,10 @@ export async function getMRR(_req, res, next) {
   }
 }
 
-export async function getAdminOverview(_req, res, next) {
+export async function getAdminOverview(req, res, next) {
   try {
+    if (!ensureAdmin(req, res)) return;
+
     const [activeSubs, totalUsers, postsToday, totalPosts] = await Promise.all([
       User.countDocuments({ "subscription.status": "active" }),
       User.countDocuments({}),

@@ -1,12 +1,23 @@
 import PlatformPost from "../models/PlatformPost.js";
 import Analytics from "../models/Analytics.js";
 
+function ensureAdmin(req, res) {
+  if (!req.user || req.user.role !== "admin") {
+    res.status(403).json({ message: "Admin access required" });
+    return false;
+  }
+
+  return true;
+}
+
 function safeMetric(post, key) {
   return Number(post?.metrics?.[key] || 0);
 }
 
-export async function getAnalytics(_req, res, next) {
+export async function getAnalytics(req, res, next) {
   try {
+    if (!ensureAdmin(req, res)) return;
+
     const posts = await PlatformPost.find();
 
     let totalLikes = 0;
@@ -29,8 +40,10 @@ export async function getAnalytics(_req, res, next) {
   }
 }
 
-export async function getAnalyticsOverview(_req, res, next) {
+export async function getAnalyticsOverview(req, res, next) {
   try {
+    if (!ensureAdmin(req, res)) return;
+
     const [posts, topPosts] = await Promise.all([
       PlatformPost.find().sort({ createdAt: -1 }).limit(2000),
       Analytics.find().sort({ score: -1 }).limit(5).populate("platformPostId")

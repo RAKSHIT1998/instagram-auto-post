@@ -66,3 +66,7 @@ docker compose up --build
 ```
 
 For Render deployment, use the project root [render.yaml](../render.yaml) and runbook in [DEPLOY.md](../DEPLOY.md).
+
+## Security notes
+
+- Admin endpoints under `/api/admin/*` require admin role and are request-audited in the `AdminAudit` collection.
