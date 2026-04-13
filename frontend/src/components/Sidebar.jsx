@@ -1,4 +1,5 @@
 import { BarChart3, Calendar, Home, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 const items = [
   { key: "dashboard", label: "Dashboard", icon: Home },
@@ -13,7 +14,12 @@ export default function Sidebar({ page, onChange, isAdmin }) {
     : items;
 
   return (
-    <aside className="hidden md:flex w-72 min-h-screen border-r border-white/10 bg-card/70 backdrop-blur-md p-6 flex-col">
+    <motion.aside
+      initial={{ x: -24, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.35 }}
+      className="hidden md:flex w-72 min-h-screen border-r border-white/10 bg-card/70 backdrop-blur-md p-6 flex-col"
+    >
       <h1 className="text-2xl font-extrabold bg-gradient-to-r from-accent to-cyan bg-clip-text text-transparent mb-10">
         AI Growth
       </h1>
@@ -23,7 +29,9 @@ export default function Sidebar({ page, onChange, isAdmin }) {
           const Icon = item.icon;
           const active = page === item.key;
           return (
-            <button
+            <motion.button
+              whileHover={{ x: 4 }}
+              whileTap={{ scale: 0.98 }}
               key={item.key}
               onClick={() => onChange(item.key)}
               className={`w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-3 ${
@@ -32,10 +40,10 @@ export default function Sidebar({ page, onChange, isAdmin }) {
             >
               <Icon size={18} />
               {item.label}
-            </button>
+            </motion.button>
           );
         })}
       </nav>
-    </aside>
+    </motion.aside>
   );
 }

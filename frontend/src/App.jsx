@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
@@ -101,24 +102,33 @@ export default function App() {
   }
 
   if (view === "landing") {
-    return <Landing onStartDemo={registerDemo} />;
+    return (
+      <>
+        <div className="noise-overlay" />
+        <Landing onStartDemo={registerDemo} />
+      </>
+    );
   }
 
   if (view === "onboarding") {
     return (
-      <Onboarding
-        status={integrationStatus}
-        onRefresh={loadMeAndStatus}
-        onDone={() => {
-          setView("app");
-          setPage("dashboard");
-        }}
-      />
+      <>
+        <div className="noise-overlay" />
+        <Onboarding
+          status={integrationStatus}
+          onRefresh={loadMeAndStatus}
+          onDone={() => {
+            setView("app");
+            setPage("dashboard");
+          }}
+        />
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative">
+      <div className="noise-overlay" />
       <Sidebar page={page} onChange={setPage} isAdmin={Boolean(user?.role === "admin")} />
 
       <main className="flex-1">
@@ -130,16 +140,26 @@ export default function App() {
           onOpenOnboarding={() => setView("onboarding")}
         />
 
-        <section className="p-4 md:p-8 max-w-6xl mx-auto">
-          {isAdminPath || page === "admin" ? (
-            <Suspense fallback={<div className="glass-card p-6 text-muted">Loading admin console...</div>}>
-              <AdminDashboard />
-            </Suspense>
-          ) : null}
-          {!isAdminPath && page === "dashboard" ? <Dashboard stats={stats} onGoGenerate={() => setPage("generate")} /> : null}
-          {!isAdminPath && page === "generate" ? <Generate onCreated={onCreated} /> : null}
-          {!isAdminPath && page === "scheduled" ? <Scheduled refreshKey={refreshKey} onItemsLoaded={setItems} /> : null}
-          {!isAdminPath && page === "analytics" ? <Analytics items={items} /> : null}
+        <section className="p-4 md:p-8 max-w-6xl mx-auto relative z-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isAdminPath ? "admin-path" : page}
+              initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -10, filter: "blur(5px)" }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
+            >
+              {isAdminPath || page === "admin" ? (
+                <Suspense fallback={<div className="glass-card p-6 text-muted">Loading admin console...</div>}>
+                  <AdminDashboard />
+                </Suspense>
+              ) : null}
+              {!isAdminPath && page === "dashboard" ? <Dashboard stats={stats} onGoGenerate={() => setPage("generate")} /> : null}
+              {!isAdminPath && page === "generate" ? <Generate onCreated={onCreated} /> : null}
+              {!isAdminPath && page === "scheduled" ? <Scheduled refreshKey={refreshKey} onItemsLoaded={setItems} /> : null}
+              {!isAdminPath && page === "analytics" ? <Analytics items={items} /> : null}
+            </motion.div>
+          </AnimatePresence>
         </section>
       </main>
     </div>
