@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   Area,
   AreaChart,
@@ -47,7 +48,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Admin Console</h1>
+      <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold">Admin Console</motion.h1>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard title="MRR" value={`₹${mrr}`} />
@@ -63,7 +64,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
-        <div className="glass-card p-5 h-80">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5 h-80 hero-glow">
           <p className="text-muted text-sm mb-4">Posts per day (last 14 days)</p>
           <ResponsiveContainer width="100%" height="90%">
             <AreaChart data={extra.postsPerDay || []}>
@@ -80,9 +81,9 @@ export default function AdminDashboard() {
               <Area type="monotone" dataKey="count" stroke="#7C3AED" fillOpacity={1} fill="url(#colorPosts)" />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+        </motion.div>
 
-        <div className="glass-card p-5 h-80">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07 }} className="glass-card p-5 h-80">
           <p className="text-muted text-sm mb-4">Platform engagement</p>
           <ResponsiveContainer width="100%" height="90%">
             <PieChart>
@@ -94,7 +95,7 @@ export default function AdminDashboard() {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
-        </div>
+        </motion.div>
       </div>
 
       <div className="glass-card p-5">
