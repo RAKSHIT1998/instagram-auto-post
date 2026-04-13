@@ -40,6 +40,7 @@ Required:
 - MONGO_URI
 - REDIS_URL
 - JWT_SECRET
+- TOKEN_ENCRYPTION_KEY
 - ADMIN_EMAIL
 - CORS_ORIGIN = https://<ai-social-frontend-service>.onrender.com
 - ML_SERVICE_URL = https://<ai-social-ml-service>.onrender.com
@@ -73,6 +74,7 @@ Set the same core runtime + integration variables used by backend:
 - MONGO_URI
 - REDIS_URL
 - JWT_SECRET
+- TOKEN_ENCRYPTION_KEY
 - ML_SERVICE_URL
 - HF_API_KEY (if used)
 - IG_USER_ID, META_ACCESS_TOKEN, FB_PAGE_ID

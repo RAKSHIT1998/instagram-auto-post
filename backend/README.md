@@ -8,6 +8,7 @@ Important envs:
 - `MONGO_URI` or `MONGODB_URI`
 - `REDIS_URL`
 - `JWT_SECRET`
+- `TOKEN_ENCRYPTION_KEY` (used to encrypt saved OAuth tokens)
 - `CORS_ORIGIN` (comma-separated allowed origins; local default: `http://localhost:5173`)
 
 2) Install deps

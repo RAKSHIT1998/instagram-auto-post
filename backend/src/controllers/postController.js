@@ -6,6 +6,7 @@ import { generateMultiPlatformContent } from "../services/ai/contentGenerator.js
 import { generateImageFromIdea } from "../services/imageGenerator.js";
 import { enqueuePublish } from "../queue/publishQueue.js";
 import { predictBestTime } from "../utils/bestTimePredictor.js";
+import { getConnectedPlatforms } from "../services/platformCredentials.js";
 
 const createSchema = z.object({
   topic: z.string().min(3),
@@ -50,6 +51,13 @@ export async function createPost(req, res, next) {
   try {
     const body = createSchema.parse(req.body);
     await enforcePlanQuota(req.user.sub);
+    const connectedPlatforms = await getConnectedPlatforms(req.user.sub);
+
+    if (!connectedPlatforms.length) {
+      const err = new Error("Connect at least one platform before creating a post");
+      err.status = 400;
+      throw err;
+    }
 
     const ai = await generateMultiPlatformContent({
       topic: body.topic,
@@ -70,15 +78,25 @@ export async function createPost(req, res, next) {
       userId: req.user.sub
     });
 
-    const platforms = [
-      {
-        name: "instagram",
-        content: `${ai.instagram.caption}\n\n${(ai.instagram.hashtags || []).join(" ")}`
-      },
-      { name: "twitter", content: ai.twitter.tweet },
-      { name: "linkedin", content: ai.linkedin.post },
-      { name: "facebook", content: ai.facebook.post }
-    ];
+    const contentMap = {
+      instagram: `${ai.instagram.caption}\n\n${(ai.instagram.hashtags || []).join(" ")}`,
+      twitter: ai.twitter.tweet,
+      linkedin: ai.linkedin.post,
+      facebook: ai.facebook.post
+    };
+
+    const platforms = connectedPlatforms
+      .filter((platform) => Object.prototype.hasOwnProperty.call(contentMap, platform))
+      .map((platform) => ({
+        name: platform,
+        content: contentMap[platform]
+      }));
+
+    if (!platforms.length) {
+      const err = new Error("No supported connected platforms found for publishing");
+      err.status = 400;
+      throw err;
+    }
 
     const created = [];
     for (const p of platforms) {

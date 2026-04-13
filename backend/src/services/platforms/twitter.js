@@ -1,8 +1,10 @@
 import axios from "axios";
 import { env } from "../../config/env.js";
 
-export async function publishToTwitter({ content }) {
-  if (!env.X_BEARER_TOKEN) {
+export async function publishToTwitter({ content, credentials = {} }) {
+  const bearerToken = credentials.accessToken || env.X_BEARER_TOKEN;
+
+  if (!bearerToken) {
     return { externalPostId: `x_mock_${Date.now()}`, mocked: true };
   }
 
@@ -11,7 +13,7 @@ export async function publishToTwitter({ content }) {
     { text: content },
     {
       headers: {
-        Authorization: `Bearer ${env.X_BEARER_TOKEN}`,
+        Authorization: `Bearer ${bearerToken}`,
         "Content-Type": "application/json"
       },
       timeout: 30000

@@ -28,7 +28,7 @@ export function initPublishWorker() {
     "publish-queue",
     async (job) => {
       const { platformPostId } = job.data;
-      const doc = await PlatformPost.findById(platformPostId);
+      const doc = await PlatformPost.findById(platformPostId).populate("postId", "userId");
       if (!doc) return;
 
       doc.status = "queued";
@@ -38,6 +38,8 @@ export function initPublishWorker() {
         content: doc.content,
         mediaUrl: doc.mediaUrl,
         mediaType: doc.mediaType
+      }, {
+        userId: doc.postId?.userId?.toString()
       });
 
       doc.status = "posted";

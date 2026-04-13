@@ -81,6 +81,19 @@ function calculateScore(metrics) {
   );
 }
 
+function isOwner(userId, postDoc) {
+  return Boolean(postDoc?.userId?.toString() === userId);
+}
+
+async function findOwnedPlatformPost(platformPostId, userId) {
+  const doc = await PlatformPost.findById(platformPostId).populate("postId", "userId");
+  if (!doc || !isOwner(userId, doc.postId)) {
+    return null;
+  }
+
+  return doc;
+}
+
 export async function createCorePost(req, res, next) {
   try {
     const body = createSchema.parse(req.body);
@@ -102,7 +115,8 @@ export async function createCorePost(req, res, next) {
     const post = await Post.create({
       idea: body.idea,
       niche: body.niche,
-      tone: body.tone
+      tone: body.tone,
+      userId: req.user.sub
     });
 
     const docs = buildPlatformDocs(post._id, content, imageUrl, body.autoSchedule);
@@ -116,7 +130,10 @@ export async function createCorePost(req, res, next) {
 
 export async function listPlatformPosts(_req, res, next) {
   try {
-    const docs = await PlatformPost.find()
+    const postIds = await Post.find({ userId: _req.user.sub }).select("_id").lean();
+    const ids = postIds.map((doc) => doc._id);
+
+    const docs = await PlatformPost.find({ postId: { $in: ids } })
       .populate("postId")
       .sort({ createdAt: -1 })
       .limit(200);
@@ -130,20 +147,17 @@ export async function listPlatformPosts(_req, res, next) {
 export async function schedulePlatformPost(req, res, next) {
   try {
     const body = scheduleSchema.parse(req.body);
-    const doc = await PlatformPost.findByIdAndUpdate(
-      req.params.id,
-      {
-        scheduledAt: body.scheduledAt,
-        status: "pending"
-      },
-      { new: true }
-    );
+    const ownedDoc = await findOwnedPlatformPost(req.params.id, req.user.sub);
 
-    if (!doc) {
+    if (!ownedDoc) {
       return res.status(404).json({ message: "PlatformPost not found" });
     }
 
-    res.json(doc);
+    ownedDoc.scheduledAt = body.scheduledAt;
+    ownedDoc.status = "pending";
+    await ownedDoc.save();
+
+    res.json(ownedDoc);
   } catch (error) {
     next(error);
   }
@@ -151,7 +165,7 @@ export async function schedulePlatformPost(req, res, next) {
 
 export async function publishNow(req, res, next) {
   try {
-    const doc = await PlatformPost.findById(req.params.id);
+    const doc = await findOwnedPlatformPost(req.params.id, req.user.sub);
     if (!doc) {
       return res.status(404).json({ message: "PlatformPost not found" });
     }
@@ -166,7 +180,7 @@ export async function publishNow(req, res, next) {
 export async function ingestAnalytics(req, res, next) {
   try {
     const metrics = metricsSchema.parse(req.body);
-    const platformPost = await PlatformPost.findById(req.params.id);
+    const platformPost = await findOwnedPlatformPost(req.params.id, req.user.sub);
 
     if (!platformPost) {
       return res.status(404).json({ message: "PlatformPost not found" });
@@ -190,7 +204,13 @@ export async function ingestAnalytics(req, res, next) {
 export async function topPerformers(req, res, next) {
   try {
     const limit = Number(req.query.limit || 10);
-    const docs = await Analytics.find().sort({ score: -1 }).limit(limit).populate("platformPostId");
+    const postIds = await Post.find({ userId: req.user.sub }).select("_id").lean();
+    const ids = postIds.map((doc) => doc._id);
+
+    const docs = await Analytics.find({ postId: { $in: ids } })
+      .sort({ score: -1 })
+      .limit(limit)
+      .populate("platformPostId");
     res.json(docs);
   } catch (error) {
     next(error);

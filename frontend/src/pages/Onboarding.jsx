@@ -9,11 +9,18 @@ const STEPS = [
 ];
 
 export default function Onboarding({ status, onRefresh, onDone }) {
-  const [form, setForm] = useState({ accountLabel: "", accessToken: "" });
+  const [form, setForm] = useState({ accountLabel: "", accessToken: "", platformId: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const nextPlatform = useMemo(() => STEPS.find((s) => !status?.connected?.[s.key])?.key || null, [status]);
+
+  const platformIdLabel = useMemo(() => {
+    if (nextPlatform === "instagram") return "Instagram User ID";
+    if (nextPlatform === "linkedin") return "LinkedIn Author URN";
+    if (nextPlatform === "facebook") return "Facebook Page ID";
+    return "";
+  }, [nextPlatform]);
 
   async function connect(platform) {
     setLoading(true);
@@ -22,9 +29,17 @@ export default function Onboarding({ status, onRefresh, onDone }) {
       await API.post("/integrations/connect", {
         platform,
         accountLabel: form.accountLabel || `${platform}-account`,
-        accessToken: form.accessToken
+        accessToken: form.accessToken,
+        metadata:
+          platform === "instagram"
+            ? { igUserId: form.platformId }
+            : platform === "linkedin"
+              ? { authorUrn: form.platformId }
+              : platform === "facebook"
+                ? { pageId: form.platformId }
+                : {}
       });
-      setForm({ accountLabel: "", accessToken: "" });
+      setForm({ accountLabel: "", accessToken: "", platformId: "" });
       await onRefresh();
     } catch (e) {
       setError(e?.response?.data?.message || "Unable to connect platform");
@@ -69,6 +84,14 @@ export default function Onboarding({ status, onRefresh, onDone }) {
               value={form.accessToken}
               onChange={(e) => setForm({ ...form, accessToken: e.target.value })}
             />
+            {platformIdLabel ? (
+              <input
+                className="input-dark"
+                placeholder={platformIdLabel}
+                value={form.platformId}
+                onChange={(e) => setForm({ ...form, platformId: e.target.value })}
+              />
+            ) : null}
             <button className="gradient-btn" onClick={() => connect(nextPlatform)} disabled={loading}>
               {loading ? "Connecting..." : `Connect ${nextPlatform}`}
             </button>
