@@ -28,7 +28,7 @@ export default function Generate({ onCreated }) {
 
   return (
     <div className="space-y-5">
-      <div className="glass-card p-6">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 hero-glow">
         <h2 className="text-xl font-semibold mb-4">Generate AI Post</h2>
         <div className="grid md:grid-cols-3 gap-3">
           <input className="input-dark" placeholder="Topic" value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} />
@@ -39,10 +39,10 @@ export default function Generate({ onCreated }) {
           {loading ? "Generating..." : "Generate 🚀"}
         </button>
         {error ? <p className="text-red-400 mt-3 text-sm">{error}</p> : null}
-      </div>
+      </motion.div>
 
       {result ? (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6">
+        <motion.div initial={{ opacity: 0, y: 8, scale: 0.99 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="glass-card p-6">
           <p className="text-sm text-cyan uppercase tracking-wide mb-2">Preview</p>
           <p className="text-lg font-semibold mb-4">{result.post?.idea}</p>
           <pre className="text-xs overflow-auto text-muted">{JSON.stringify(result.generated, null, 2)}</pre>

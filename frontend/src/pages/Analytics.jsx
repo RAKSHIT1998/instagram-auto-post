@@ -1,4 +1,5 @@
 import AnalyticsCard from "../components/AnalyticsCard";
+import { motion } from "framer-motion";
 
 function countBy(items, fn) {
   return items.reduce((acc, it) => {
@@ -14,16 +15,16 @@ export default function Analytics({ items }) {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">Analytics</h2>
+      <motion.h2 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-xl font-semibold">Analytics</motion.h2>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard title="Posted" value={statusMap.posted || 0} />
         <AnalyticsCard title="Pending" value={statusMap.pending || 0} />
         <AnalyticsCard title="Queued" value={statusMap.queued || 0} />
         <AnalyticsCard title="Failed" value={statusMap.failed || 0} />
-      </div>
+      </motion.div>
 
-      <div className="glass-card p-5">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5 hero-glow">
         <p className="text-muted mb-2">Platform Distribution</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
           {Object.entries(platformMap).map(([k, v]) => (
@@ -33,7 +34,7 @@ export default function Analytics({ items }) {
             </div>
           ))}
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

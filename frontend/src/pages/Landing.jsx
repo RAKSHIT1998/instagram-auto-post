@@ -52,13 +52,27 @@ export default function Landing({ onStartDemo }) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="glass-card p-6 md:p-8"
+          className="glass-card p-6 md:p-8 hero-glow"
         >
           <p className="text-muted text-sm mb-3">Live preview</p>
           <div className="space-y-3">
             <div className="bg-white/5 rounded-xl p-4 border border-white/10">Instagram caption + hashtags generated</div>
             <div className="bg-white/5 rounded-xl p-4 border border-white/10">X post optimized under 280 chars</div>
             <div className="bg-white/5 rounded-xl p-4 border border-white/10">LinkedIn insight post with CTA</div>
+          </div>
+
+          <div className="mt-5 flex flex-wrap gap-2">
+            {["Hook Optimizer", "Trend Radar", "Auto Schedule"].map((badge, idx) => (
+              <motion.span
+                key={badge}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: [0, -2, 0] }}
+                transition={{ duration: 2.8, delay: idx * 0.18, repeat: Infinity }}
+                className="px-3 py-1 rounded-full text-xs border border-white/20 bg-white/5"
+              >
+                {badge}
+              </motion.span>
+            ))}
           </div>
         </motion.div>
       </section>

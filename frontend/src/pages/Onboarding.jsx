@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
+import { motion } from "framer-motion";
 import API from "../services/api";
 
 const STEPS = [
@@ -50,21 +51,21 @@ export default function Onboarding({ status, onRefresh, onDone }) {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
-      <div className="glass-card p-6">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 hero-glow">
         <p className="text-cyan uppercase tracking-[0.2em] text-xs mb-2">Onboarding Wizard</p>
         <h2 className="text-2xl font-bold">Connect your channels</h2>
         <p className="text-muted mt-2">Complete Instagram, X and LinkedIn to unlock automated multi-platform publishing.</p>
-      </div>
+      </motion.div>
 
-      <div className="glass-card p-6">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="glass-card p-6">
         <div className="space-y-3 mb-6">
           {STEPS.map((s, i) => {
             const done = Boolean(status?.connected?.[s.key]);
             return (
-              <div key={s.key} className="flex items-center gap-3">
+              <motion.div key={s.key} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-center gap-3">
                 {done ? <CheckCircle2 className="text-success" size={18} /> : <Circle className="text-muted" size={18} />}
                 <span className={done ? "text-white" : "text-muted"}>{i + 1}. {s.label}</span>
-              </div>
+              </motion.div>
             );
           })}
         </div>
@@ -103,7 +104,7 @@ export default function Onboarding({ status, onRefresh, onDone }) {
             <button className="gradient-btn" onClick={onDone}>Go to dashboard</button>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
