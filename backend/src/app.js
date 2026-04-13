@@ -20,7 +20,28 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = (env.CORS_ORIGIN || "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      if (!allowedOrigins.length || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Not allowed by CORS"));
+    }
+  })
+);
 app.use(
   express.json({
     limit: "2mb",

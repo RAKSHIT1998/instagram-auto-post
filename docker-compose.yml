@@ -13,9 +13,11 @@ services:
       RUN_EMBEDDED_WORKER: "false"
       RUN_SCHEDULER: "false"
       RUN_ANALYTICS_CRON: "false"
+      CORS_ORIGIN: http://localhost:5173
       MONGO_URI: mongodb://mongo:27017/social_ai
       REDIS_URL: redis://redis:6379
       ML_SERVICE_URL: http://ml:8000
+    restart: unless-stopped
     depends_on:
       - redis
       - mongo
@@ -30,6 +32,7 @@ services:
       MONGO_URI: mongodb://mongo:27017/social_ai
       REDIS_URL: redis://redis:6379
       ML_SERVICE_URL: http://ml:8000
+    restart: unless-stopped
     depends_on:
       - redis
       - mongo
@@ -40,6 +43,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+    restart: unless-stopped
 
   frontend:
     build:
@@ -49,13 +53,16 @@ services:
       VITE_API_BASE: http://localhost:5000
     ports:
       - "5173:5173"
+    restart: unless-stopped
     depends_on:
       - backend
 
   redis:
     image: redis:7
+    restart: unless-stopped
 
   mongo:
     image: mongo
     ports:
       - "27017:27017"
+    restart: unless-stopped

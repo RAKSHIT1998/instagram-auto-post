@@ -4,6 +4,12 @@
 
 1) Copy `.env.example` -> `.env`
 
+Important envs:
+- `MONGO_URI` or `MONGODB_URI`
+- `REDIS_URL`
+- `JWT_SECRET`
+- `CORS_ORIGIN` (comma-separated allowed origins; local default: `http://localhost:5173`)
+
 2) Install deps
 
 ```bash
@@ -57,3 +63,5 @@ From repository root:
 ```bash
 docker compose up --build
 ```
+
+For Render deployment, use the project root [render.yaml](../render.yaml) and runbook in [DEPLOY.md](../DEPLOY.md).

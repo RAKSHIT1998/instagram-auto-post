@@ -16,6 +16,8 @@ services:
         value: "false"
       - key: RUN_ANALYTICS_CRON
         value: "false"
+      - key: CORS_ORIGIN
+        sync: false
       - key: MONGO_URI
         sync: false
       - key: REDIS_URL
@@ -114,6 +116,10 @@ services:
     rootDir: frontend
     buildCommand: npm ci && npm run build
     publishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: VITE_API_BASE
         sync: false
