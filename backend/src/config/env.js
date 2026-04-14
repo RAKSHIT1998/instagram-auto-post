@@ -69,6 +69,14 @@ if (!env.REDIS_URL) {
   process.exit(1);
 }
 
+if (env.NODE_ENV === "production") {
+  const redisUrl = env.REDIS_URL.toLowerCase();
+  if (redisUrl.includes("127.0.0.1") || redisUrl.includes("localhost")) {
+    console.error("REDIS_URL cannot point to localhost in production. Set managed Redis URL (e.g. Upstash/Render Redis)");
+    process.exit(1);
+  }
+}
+
 env.IG_ACCESS_TOKEN = env.IG_ACCESS_TOKEN || env.META_ACCESS_TOKEN;
 env.X_BEARER_TOKEN = env.X_BEARER_TOKEN || env.TWITTER_TOKEN;
 env.LINKEDIN_ACCESS_TOKEN = env.LINKEDIN_ACCESS_TOKEN || env.LINKEDIN_TOKEN;
