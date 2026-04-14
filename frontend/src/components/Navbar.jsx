@@ -12,7 +12,7 @@ export default function Navbar({ user, onRegisterDemo, loading, onLogout, onOpen
       <div>
         <p className="text-muted text-sm">AI Social SaaS</p>
         <h2 className="text-lg font-semibold">Premium Growth Engine</h2>
-        <p className="text-[11px] text-muted/80 mt-0.5 hidden lg:block">Shortcuts: G Generate • D Dashboard • S Scheduled • A Analytics • I Integrations</p>
+        <p className="text-[11px] text-muted/80 mt-0.5 hidden lg:block">Shortcuts: ⌘/Ctrl+K Commands • G Generate • D Dashboard • S Scheduled • A Analytics • I Integrations</p>
       </div>
 
       <div className="flex items-center gap-3">

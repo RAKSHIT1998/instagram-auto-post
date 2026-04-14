@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
 import QuickDock from "./components/QuickDock";
+import CommandPalette from "./components/CommandPalette";
 import Dashboard from "./pages/Dashboard";
 import Generate from "./pages/Generate";
 import Scheduled from "./pages/Scheduled";
@@ -22,6 +23,7 @@ export default function App() {
   const [items, setItems] = useState([]);
   const [registerLoading, setRegisterLoading] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   async function loadMeAndStatus() {
     try {
@@ -82,6 +84,17 @@ export default function App() {
     }
 
     function onKeyDown(event) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setPaletteOpen((v) => !v);
+        return;
+      }
+
+      if (event.key === "Escape") {
+        setPaletteOpen(false);
+      }
+
+      if (paletteOpen) return;
       if (shouldIgnore(event)) return;
 
       const key = event.key.toLowerCase();
@@ -94,7 +107,7 @@ export default function App() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [paletteOpen]);
 
   async function registerDemo() {
     setRegisterLoading(true);
@@ -142,12 +155,103 @@ export default function App() {
     setPage("scheduled");
   }
 
+  const paletteActions = useMemo(() => {
+    const actions = [];
+
+    if (view === "landing") {
+      actions.push({
+        id: "start-demo",
+        label: "Start Demo Account",
+        hint: "Enter",
+        keywords: ["register", "trial", "signup"],
+        run: () => registerDemo()
+      });
+    }
+
+    if (view === "onboarding") {
+      actions.push({
+        id: "back-app",
+        label: "Back to Dashboard",
+        keywords: ["home", "dashboard"],
+        run: () => {
+          setView("app");
+          setPage("dashboard");
+        }
+      });
+    }
+
+    if (view === "app") {
+      actions.push(
+        {
+          id: "go-dashboard",
+          label: "Go to Dashboard",
+          hint: "D",
+          keywords: ["home", "overview"],
+          run: () => setPage("dashboard")
+        },
+        {
+          id: "go-generate",
+          label: "Open Generate",
+          hint: "G",
+          keywords: ["create", "ai", "compose"],
+          run: () => setPage("generate")
+        },
+        {
+          id: "go-scheduled",
+          label: "Open Scheduled",
+          hint: "S",
+          keywords: ["queue", "calendar"],
+          run: () => setPage("scheduled")
+        },
+        {
+          id: "go-analytics",
+          label: "Open Analytics",
+          hint: "A",
+          keywords: ["metrics", "charts"],
+          run: () => setPage("analytics")
+        },
+        {
+          id: "go-integrations",
+          label: "Open Integrations",
+          hint: "I",
+          keywords: ["connect", "oauth", "tokens"],
+          run: () => setView("onboarding")
+        },
+        {
+          id: "refresh-posts",
+          label: "Refresh My Posts",
+          keywords: ["reload", "sync"],
+          run: () => loadPosts()
+        }
+      );
+
+      if (user?.role === "admin") {
+        actions.push({
+          id: "go-admin",
+          label: "Open Admin Console",
+          keywords: ["admin", "reports"],
+          run: () => setPage("admin")
+        });
+      }
+
+      actions.push({
+        id: "logout",
+        label: "Logout",
+        keywords: ["sign out", "exit"],
+        run: () => logout()
+      });
+    }
+
+    return actions;
+  }, [view, user?.role]);
+
   if (view === "landing") {
     return (
       <>
         <div className="cursor-glow" />
         <div className="noise-overlay" />
         <Landing onStartDemo={registerDemo} />
+        <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} actions={paletteActions} />
       </>
     );
   }
@@ -165,6 +269,7 @@ export default function App() {
             setPage("dashboard");
           }}
         />
+        <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} actions={paletteActions} />
       </>
     );
   }
@@ -214,6 +319,8 @@ export default function App() {
           onOpenOnboarding={() => setView("onboarding")}
         />
       ) : null}
+
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} actions={paletteActions} />
     </div>
   );
 }
