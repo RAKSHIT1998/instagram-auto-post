@@ -57,13 +57,26 @@ if (!parsed.success) {
 
 export const env = parsed.data;
 
+function normalizeRedisUrl(value) {
+  if (!value) return value;
+
+  let normalized = value.trim();
+
+  normalized = normalized.replace(/^redis-cli\s+-u\s+/i, "");
+  normalized = normalized.replace(/^-u\s+/i, "");
+  normalized = normalized.replace(/^%20*-u%20*/i, "");
+  normalized = normalized.replace(/^['"]|['"]$/g, "");
+
+  return normalized;
+}
+
 env.MONGODB_URI = env.MONGODB_URI || env.MONGO_URI;
 if (!env.MONGODB_URI) {
   console.error("MONGODB_URI or MONGO_URI must be set");
   process.exit(1);
 }
 
-env.REDIS_URL = env.REDIS_URL || (env.NODE_ENV === "production" ? undefined : "redis://127.0.0.1:6379");
+env.REDIS_URL = normalizeRedisUrl(env.REDIS_URL) || (env.NODE_ENV === "production" ? undefined : "redis://127.0.0.1:6379");
 if (!env.REDIS_URL) {
   console.error("REDIS_URL must be set in production (use Upstash/Render Redis URL)");
   process.exit(1);
