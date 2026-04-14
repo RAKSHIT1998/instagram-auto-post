@@ -11,7 +11,7 @@ const envSchema = z.object({
   CORS_ORIGIN: z.string().optional(),
   MONGODB_URI: z.string().optional(),
   MONGO_URI: z.string().optional(),
-  REDIS_URL: z.string().default("redis://127.0.0.1:6379"),
+  REDIS_URL: z.string().optional(),
   JWT_SECRET: z.string().default("supersecret"),
   TOKEN_ENCRYPTION_KEY: z.string().optional(),
   ADMIN_EMAIL: z.string().optional(),
@@ -60,6 +60,12 @@ export const env = parsed.data;
 env.MONGODB_URI = env.MONGODB_URI || env.MONGO_URI;
 if (!env.MONGODB_URI) {
   console.error("MONGODB_URI or MONGO_URI must be set");
+  process.exit(1);
+}
+
+env.REDIS_URL = env.REDIS_URL || (env.NODE_ENV === "production" ? undefined : "redis://127.0.0.1:6379");
+if (!env.REDIS_URL) {
+  console.error("REDIS_URL must be set in production (use Upstash/Render Redis URL)");
   process.exit(1);
 }
 
