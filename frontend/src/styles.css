@@ -50,6 +50,30 @@ body::after {
   @apply bg-gradient-to-r from-accent to-cyan text-white font-semibold px-5 py-2.5 rounded-xl shadow-glow transition-all duration-200 hover:opacity-95 hover:scale-[1.01];
 }
 
+.gradient-btn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.gradient-btn::after {
+  content: "";
+  position: absolute;
+  left: var(--ripple-x, 50%);
+  top: var(--ripple-y, 50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%) scale(0);
+  background: rgba(255, 255, 255, 0.35);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gradient-btn:active::after {
+  animation: ripplePulse 0.55s ease-out;
+}
+
 .input-dark {
   @apply w-full rounded-xl border border-white/10 bg-card/70 px-4 py-3 text-text outline-none focus:border-accent;
 }
@@ -62,6 +86,27 @@ body::after {
   opacity: 0.18;
   background-image: radial-gradient(rgba(255, 255, 255, 0.08) 0.4px, transparent 0.4px);
   background-size: 3px 3px;
+}
+
+.cursor-glow {
+  position: fixed;
+  left: var(--cursor-x, 50vw);
+  top: var(--cursor-y, 50vh);
+  width: 280px;
+  height: 280px;
+  border-radius: 9999px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+  background: radial-gradient(circle, rgba(124, 58, 237, 0.18) 0%, rgba(6, 182, 212, 0.12) 45%, transparent 70%);
+  filter: blur(14px);
+}
+
+@media (pointer: coarse) {
+  .cursor-glow {
+    display: none;
+  }
 }
 
 .hero-glow {
@@ -83,6 +128,17 @@ body::after {
   z-index: 1;
 }
 
+.skeleton {
+  border-radius: 0.85rem;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.07) 25%, rgba(255, 255, 255, 0.14) 37%, rgba(255, 255, 255, 0.07) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.25s ease-in-out infinite;
+}
+
+.skeleton-line {
+  height: 0.75rem;
+}
+
 @keyframes floatBlob {
   0%,
   100% {
@@ -102,5 +158,25 @@ body::after {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes ripplePulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(14);
+    opacity: 0;
   }
 }

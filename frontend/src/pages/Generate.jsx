@@ -41,7 +41,17 @@ export default function Generate({ onCreated }) {
         {error ? <p className="text-red-400 mt-3 text-sm">{error}</p> : null}
       </motion.div>
 
-      {result ? (
+      {loading ? (
+        <div className="glass-card p-6 space-y-3">
+          <div className="skeleton h-4 w-20" />
+          <div className="skeleton h-5 w-2/3" />
+          <div className="skeleton skeleton-line w-full" />
+          <div className="skeleton skeleton-line w-11/12" />
+          <div className="skeleton skeleton-line w-8/12" />
+        </div>
+      ) : null}
+
+      {result && !loading ? (
         <motion.div initial={{ opacity: 0, y: 8, scale: 0.99 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="glass-card p-6">
           <p className="text-sm text-cyan uppercase tracking-wide mb-2">Preview</p>
           <p className="text-lg font-semibold mb-4">{result.post?.idea}</p>

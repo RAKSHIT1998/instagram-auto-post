@@ -55,6 +55,25 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    let raf = 0;
+
+    function onPointerMove(event) {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--cursor-x", `${event.clientX}px`);
+        document.documentElement.style.setProperty("--cursor-y", `${event.clientY}px`);
+      });
+    }
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onPointerMove);
+    };
+  }, []);
+
   async function registerDemo() {
     setRegisterLoading(true);
     try {
@@ -104,6 +123,7 @@ export default function App() {
   if (view === "landing") {
     return (
       <>
+        <div className="cursor-glow" />
         <div className="noise-overlay" />
         <Landing onStartDemo={registerDemo} />
       </>
@@ -113,6 +133,7 @@ export default function App() {
   if (view === "onboarding") {
     return (
       <>
+        <div className="cursor-glow" />
         <div className="noise-overlay" />
         <Onboarding
           status={integrationStatus}
@@ -128,6 +149,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex relative">
+      <div className="cursor-glow" />
       <div className="noise-overlay" />
       <Sidebar page={page} onChange={setPage} isAdmin={Boolean(user?.role === "admin")} />
 

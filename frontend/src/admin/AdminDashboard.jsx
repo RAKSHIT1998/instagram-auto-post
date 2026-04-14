@@ -18,6 +18,7 @@ import AnalyticsCard from "../components/AnalyticsCard";
 const PIE_COLORS = ["#7C3AED", "#06B6D4", "#10B981", "#EAB308"];
 
 export default function AdminDashboard() {
+  const [loading, setLoading] = useState(true);
   const [mrr, setMrr] = useState(0);
   const [activeUsers, setActiveUsers] = useState(0);
   const [overview, setOverview] = useState({ totalUsers: 0, postsToday: 0, totalPosts: 0 });
@@ -41,6 +42,9 @@ export default function AdminDashboard() {
       .catch(() => {
         setMrr(0);
         setActiveUsers(0);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -49,6 +53,26 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold">Admin Console</motion.h1>
+
+      {loading ? (
+        <div className="space-y-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className="glass-card p-5 space-y-3">
+                <div className="skeleton h-3 w-24" />
+                <div className="skeleton h-8 w-20" />
+              </div>
+            ))}
+          </div>
+          <div className="grid lg:grid-cols-2 gap-4">
+            <div className="glass-card p-5 h-80 skeleton" />
+            <div className="glass-card p-5 h-80 skeleton" />
+          </div>
+        </div>
+      ) : null}
+
+      {!loading ? (
+        <>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnalyticsCard title="MRR" value={`₹${mrr}`} />
@@ -102,17 +126,25 @@ export default function AdminDashboard() {
         <p className="text-muted text-sm mb-3">Top performing posts</p>
         <div className="space-y-3">
           {(extra.topPerformingPosts || []).map((post, idx) => (
-            <div key={`${post.postId}-${idx}`} className="p-3 rounded-xl bg-white/5 border border-white/10">
+            <motion.div
+              key={`${post.postId}-${idx}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+              className="p-3 rounded-xl bg-white/5 border border-white/10"
+            >
               <div className="flex justify-between mb-1">
                 <span className="text-cyan uppercase text-xs tracking-wider">{post.platform}</span>
                 <span className="font-mono">Score: {post.score}</span>
               </div>
               <p className="text-sm text-muted line-clamp-2">{post.content}</p>
-            </div>
+            </motion.div>
           ))}
           {!(extra.topPerformingPosts || []).length ? <p className="text-muted text-sm">No data yet.</p> : null}
         </div>
       </div>
+        </>
+      ) : null}
     </div>
   );
 }

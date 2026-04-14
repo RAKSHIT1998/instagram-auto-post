@@ -3,6 +3,21 @@ import { motion } from "framer-motion";
 import API from "../services/api";
 import PostCard from "../components/PostCard";
 
+const listVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 }
+};
+
 export default function Scheduled({ refreshKey, onItemsLoaded }) {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
@@ -30,13 +45,33 @@ export default function Scheduled({ refreshKey, onItemsLoaded }) {
         <button onClick={load} className="gradient-btn">Refresh</button>
       </motion.div>
 
-      {loading ? <p className="text-muted">Loading...</p> : null}
+      {loading ? (
+        <div className="grid lg:grid-cols-2 gap-4">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <div key={idx} className="glass-card p-5 space-y-3">
+              <div className="skeleton h-4 w-24" />
+              <div className="skeleton skeleton-line w-full" />
+              <div className="skeleton skeleton-line w-10/12" />
+              <div className="skeleton skeleton-line w-8/12" />
+            </div>
+          ))}
+        </div>
+      ) : null}
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid lg:grid-cols-2 gap-4">
-        {items.map((item) => (
-          <PostCard key={item._id} item={item} />
-        ))}
-      </motion.div>
+      {!loading ? (
+        <motion.div
+          variants={listVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid lg:grid-cols-2 gap-4"
+        >
+          {items.map((item) => (
+            <motion.div key={item._id} variants={itemVariants}>
+              <PostCard item={item} />
+            </motion.div>
+          ))}
+        </motion.div>
+      ) : null}
     </div>
   );
 }
