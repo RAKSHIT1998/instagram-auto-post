@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 
@@ -15,8 +14,6 @@ import adminRoutes from "./routes/adminRoutes.js";
 import { initPublishWorker } from "./queue/publishQueue.js";
 import { startScheduler } from "./jobs/scheduler.js";
 import { startAnalyticsCollector } from "./jobs/analyticsCollector.js";
-
-dotenv.config();
 
 const app = express();
 
