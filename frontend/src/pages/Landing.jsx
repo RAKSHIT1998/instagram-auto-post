@@ -3,10 +3,26 @@ import { motion } from "framer-motion";
 import MotionSection from "../components/MotionSection";
 import API from "../services/api";
 
+const FAQS = [
+  {
+    q: "Can I connect my own social accounts?",
+    a: "Yes. Every user connects their own Instagram, X, LinkedIn and other APIs inside onboarding."
+  },
+  {
+    q: "Does it auto-publish content?",
+    a: "Yes. Generated posts are queued and published via background workers with retry logic."
+  },
+  {
+    q: "Can I start free?",
+    a: "Yes. You can start with a demo and then move to paid plans when your volume increases."
+  }
+];
+
 export default function Landing({ onStartDemo }) {
   const [waitlist, setWaitlist] = useState({ name: "", email: "", niche: "" });
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [openFaq, setOpenFaq] = useState(0);
 
   async function joinWaitlist() {
     setLoading(true);
@@ -103,6 +119,29 @@ export default function Landing({ onStartDemo }) {
           </div>
           <button className="gradient-btn" onClick={joinWaitlist} disabled={loading}>{loading ? "Joining..." : "Join waitlist"}</button>
           {message ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
+        </div>
+      </section>
+
+      <section className="max-w-4xl mx-auto px-4 md:px-8 pb-24">
+        <div className="glass-card p-6 md:p-8">
+          <h3 className="text-2xl font-bold mb-4">FAQs</h3>
+          <div className="space-y-2">
+            {FAQS.map((faq, idx) => (
+              <div key={faq.q} className="border border-white/10 rounded-xl overflow-hidden">
+                <button
+                  className="w-full text-left px-4 py-3 hover:bg-white/5"
+                  onClick={() => setOpenFaq((current) => (current === idx ? -1 : idx))}
+                >
+                  {faq.q}
+                </button>
+                {openFaq === idx ? (
+                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} className="px-4 pb-4 text-muted text-sm">
+                    {faq.a}
+                  </motion.div>
+                ) : null}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </div>

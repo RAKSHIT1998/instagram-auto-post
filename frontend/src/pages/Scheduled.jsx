@@ -21,6 +21,9 @@ const itemVariants = {
 export default function Scheduled({ refreshKey, onItemsLoaded }) {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("new");
 
   async function load() {
     setLoading(true);
@@ -38,12 +41,49 @@ export default function Scheduled({ refreshKey, onItemsLoaded }) {
     load();
   }, [refreshKey]);
 
+  const filtered = items
+    .filter((item) => {
+      if (statusFilter === "all") return true;
+      return item.status === statusFilter;
+    })
+    .filter((item) => {
+      if (!query.trim()) return true;
+      const haystack = `${item.platform || ""} ${item.content || ""}`.toLowerCase();
+      return haystack.includes(query.toLowerCase());
+    })
+    .sort((a, b) => {
+      if (sortBy === "new") return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      if (sortBy === "old") return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+      return (a.platform || "").localeCompare(b.platform || "");
+    });
+
   return (
     <div className="space-y-4">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Scheduled Posts</h2>
         <button onClick={load} className="gradient-btn">Refresh</button>
       </motion.div>
+
+      <div className="glass-card p-4 grid md:grid-cols-3 gap-3">
+        <input
+          className="input-dark"
+          placeholder="Search by platform or content"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
+        <select className="input-dark" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+          <option value="all">All statuses</option>
+          <option value="posted">Posted</option>
+          <option value="pending">Pending</option>
+          <option value="queued">Queued</option>
+          <option value="failed">Failed</option>
+        </select>
+        <select className="input-dark" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+          <option value="new">Newest first</option>
+          <option value="old">Oldest first</option>
+          <option value="platform">Platform A-Z</option>
+        </select>
+      </div>
 
       {loading ? (
         <div className="grid lg:grid-cols-2 gap-4">
@@ -65,12 +105,16 @@ export default function Scheduled({ refreshKey, onItemsLoaded }) {
           animate="visible"
           className="grid lg:grid-cols-2 gap-4"
         >
-          {items.map((item) => (
+          {filtered.map((item) => (
             <motion.div key={item._id} variants={itemVariants}>
               <PostCard item={item} />
             </motion.div>
           ))}
         </motion.div>
+      ) : null}
+
+      {!loading && !filtered.length ? (
+        <div className="glass-card p-6 text-center text-muted">No posts match your filters yet.</div>
       ) : null}
     </div>
   );
