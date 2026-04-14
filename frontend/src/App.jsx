@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
+import QuickDock from "./components/QuickDock";
 import Dashboard from "./pages/Dashboard";
 import Generate from "./pages/Generate";
 import Scheduled from "./pages/Scheduled";
@@ -72,6 +73,27 @@ export default function App() {
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onPointerMove);
     };
+  }, []);
+
+  useEffect(() => {
+    function shouldIgnore(event) {
+      const tag = event.target?.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || event.target?.isContentEditable;
+    }
+
+    function onKeyDown(event) {
+      if (shouldIgnore(event)) return;
+
+      const key = event.key.toLowerCase();
+      if (key === "g") setPage("generate");
+      if (key === "d") setPage("dashboard");
+      if (key === "s") setPage("scheduled");
+      if (key === "a") setPage("analytics");
+      if (key === "i") setView("onboarding");
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   async function registerDemo() {
@@ -184,6 +206,14 @@ export default function App() {
           </AnimatePresence>
         </section>
       </main>
+
+      {!isAdminPath ? (
+        <QuickDock
+          page={page}
+          onChange={setPage}
+          onOpenOnboarding={() => setView("onboarding")}
+        />
+      ) : null}
     </div>
   );
 }
