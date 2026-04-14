@@ -2,6 +2,9 @@
   "name": "instagram-auto-post-monorepo",
   "private": true,
   "version": "1.0.0",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "postinstall": "npm --prefix backend install",
     "start": "npm --prefix backend start",
