@@ -31,6 +31,8 @@ Services created:
 - ai-social-ml (web)
 - ai-social-frontend (static)
 
+If you create services manually and forget to set `Root Directory=backend`, this repo now includes a root [package.json](package.json) that proxies backend install/start scripts as a safety fallback.
+
 ## 4) Fill environment variables
 
 ### backend (ai-social-backend)
