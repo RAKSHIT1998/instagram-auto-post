@@ -5,9 +5,9 @@ export default function MotionSection({ eyebrow, title, description, children, c
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
 
-  const y = useTransform(scrollYProgress, [0, 1], [80, -50]);
-  const opacity = useTransform(scrollYProgress, [0.1, 0.4, 0.9], [0.2, 1, 0.3]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.95, 1, 0.98]);
+  const y = useTransform(scrollYProgress, [0, 1], [50, -30]);
+  const opacity = useTransform(scrollYProgress, [0.05, 0.35, 0.95], [0.55, 1, 0.7]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.97, 1, 0.99]);
 
   return (
     <section ref={ref} className={`${minHeight} flex items-center justify-center px-4 md:px-8`}>

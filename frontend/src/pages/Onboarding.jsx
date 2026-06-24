@@ -78,7 +78,10 @@ export default function Onboarding({ status, onRefresh, onDone }) {
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="spotlight-card glass-card p-6 hero-glow">
         <p className="text-cyan uppercase tracking-[0.2em] text-xs mb-2">Onboarding Wizard</p>
         <h2 className="text-2xl font-bold">Connect your channels</h2>
-        <p className="text-muted mt-2">Complete Instagram, X and LinkedIn to unlock automated multi-platform publishing.</p>
+        <p className="text-muted mt-2">
+          Connect at least one platform to publish - AI handles the writing, scheduling and posting for you from
+          there. You can always connect more, or come back to this later.
+        </p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="spotlight-card glass-card p-6">
@@ -98,9 +101,14 @@ export default function Onboarding({ status, onRefresh, onDone }) {
           <div className="space-y-3">
             <p className="text-sm text-cyan uppercase tracking-wider">Next step: twitter</p>
             <p className="text-muted text-sm">Connect your X account securely. No tokens to copy or paste.</p>
-            <MagneticButton className="gradient-btn" onClick={connectTwitterOAuth} disabled={loading}>
-              {loading ? "Redirecting..." : "Connect with X"}
-            </MagneticButton>
+            <div className="flex items-center gap-4">
+              <MagneticButton className="gradient-btn" onClick={connectTwitterOAuth} disabled={loading}>
+                {loading ? "Redirecting..." : "Connect with X"}
+              </MagneticButton>
+              <button className="text-muted text-sm hover:text-white underline" onClick={onDone}>
+                Skip for now
+              </button>
+            </div>
             {error ? <p className="text-red-400 text-sm">{error}</p> : null}
           </div>
         ) : nextPlatform ? (
@@ -126,9 +134,14 @@ export default function Onboarding({ status, onRefresh, onDone }) {
                 onChange={(e) => setForm({ ...form, platformId: e.target.value })}
               />
             ) : null}
-            <MagneticButton className="gradient-btn" onClick={() => connect(nextPlatform)} disabled={loading}>
-              {loading ? "Connecting..." : `Connect ${nextPlatform}`}
-            </MagneticButton>
+            <div className="flex items-center gap-4">
+              <MagneticButton className="gradient-btn" onClick={() => connect(nextPlatform)} disabled={loading}>
+                {loading ? "Connecting..." : `Connect ${nextPlatform}`}
+              </MagneticButton>
+              <button className="text-muted text-sm hover:text-white underline" onClick={onDone}>
+                Skip for now
+              </button>
+            </div>
             {error ? <p className="text-red-400 text-sm">{error}</p> : null}
           </div>
         ) : (

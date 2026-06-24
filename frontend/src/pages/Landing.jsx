@@ -76,7 +76,9 @@ export default function Landing({ onStartDemo }) {
 
       <section className="max-w-6xl mx-auto px-4 md:px-8 py-14 md:py-24 grid lg:grid-cols-2 gap-8 items-center">
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-          <p className="text-cyan uppercase tracking-[0.2em] text-xs mb-4">Premium AI Social OS</p>
+          <span className="inline-flex items-center gap-2 text-cyan uppercase tracking-[0.2em] text-xs mb-4 px-3 py-1 rounded-full border border-cyan/30 bg-cyan/5">
+            ✨ 100% AI-generated content
+          </span>
           <h2 className="text-4xl md:text-6xl font-black leading-tight mb-6">
             Build viral content.
             <br />
@@ -85,7 +87,8 @@ export default function Landing({ onStartDemo }) {
             Grow on autopilot.
           </h2>
           <p className="text-muted text-lg mb-8">
-            Generate, schedule and optimize Instagram, X, LinkedIn and Facebook posts with one premium control center.
+            Stop writing posts yourself - let AI do it for you. It writes, schedules and publishes to Instagram, X,
+            LinkedIn and Facebook on its own, every day, with zero manual work after setup.
           </p>
           <div className="flex flex-wrap gap-3">
             <MagneticButton className="gradient-btn" onClick={onStartDemo}>Start demo</MagneticButton>

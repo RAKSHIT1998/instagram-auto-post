@@ -30,7 +30,8 @@ export default function Generate({ onCreated }) {
   return (
     <div className="space-y-5">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="spotlight-card glass-card p-6 hero-glow">
-        <h2 className="text-xl font-semibold mb-4">Generate AI Post</h2>
+        <h2 className="text-xl font-semibold mb-1">Generate AI Post</h2>
+        <p className="text-muted text-sm mb-4">Give it a topic, niche and tone - AI writes and formats it for every connected platform.</p>
         <div className="grid md:grid-cols-3 gap-3">
           <input className="input-dark" placeholder="Topic" value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} />
           <input className="input-dark" placeholder="Niche" value={form.niche} onChange={(e) => setForm({ ...form, niche: e.target.value })} />
@@ -54,7 +55,7 @@ export default function Generate({ onCreated }) {
 
       {result && !loading ? (
         <motion.div initial={{ opacity: 0, y: 8, scale: 0.99 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="spotlight-card glass-card p-6">
-          <p className="text-sm text-cyan uppercase tracking-wide mb-2">Preview</p>
+          <p className="text-sm text-cyan uppercase tracking-wide mb-2">✨ AI-generated preview</p>
           <p className="text-lg font-semibold mb-4">{result.post?.idea}</p>
           <pre className="text-xs overflow-auto text-muted">{JSON.stringify(result.generated, null, 2)}</pre>
         </motion.div>

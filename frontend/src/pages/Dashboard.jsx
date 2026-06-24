@@ -7,8 +7,10 @@ export default function Dashboard({ stats, onGoGenerate }) {
     <div className="space-y-6">
       <motion.section initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 md:p-8 hero-glow">
         <h1 className="text-2xl md:text-3xl font-extrabold mb-2">Grow your brand on autopilot</h1>
-        <p className="text-muted mb-5">Generate platform-native content and publish with one click.</p>
-        <button onClick={onGoGenerate} className="gradient-btn">Generate AI 🚀</button>
+        <p className="text-muted mb-5">
+          It's all AI-generated - tell it your niche and tone once, and let AI write, schedule and publish for you.
+        </p>
+        <button onClick={onGoGenerate} className="gradient-btn">Generate with AI ✨</button>
       </motion.section>
 
       <motion.section

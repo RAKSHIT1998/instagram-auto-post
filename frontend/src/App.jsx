@@ -33,7 +33,7 @@ export default function App() {
 
       const status = await API.get("/integrations/status");
       setIntegrationStatus(status.data);
-      setView(status.data?.allConnected ? "app" : "onboarding");
+      setView((current) => (current === "onboarding" ? "onboarding" : "app"));
     } catch {
       localStorage.removeItem("token");
       setUser(null);
