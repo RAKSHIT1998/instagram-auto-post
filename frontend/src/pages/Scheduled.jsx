@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import API from "../services/api";
 import PostCard from "../components/PostCard";
+import MagneticButton from "../components/MagneticButton";
 
 const listVariants = {
   hidden: { opacity: 0 },
@@ -61,10 +62,10 @@ export default function Scheduled({ refreshKey, onItemsLoaded }) {
     <div className="space-y-4">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Scheduled Posts</h2>
-        <button onClick={load} className="gradient-btn">Refresh</button>
+        <MagneticButton onClick={load} className="gradient-btn">Refresh</MagneticButton>
       </motion.div>
 
-      <div className="glass-card p-4 grid md:grid-cols-3 gap-3">
+      <div className="spotlight-card glass-card p-4 grid md:grid-cols-3 gap-3">
         <input
           className="input-dark"
           placeholder="Search by platform or content"

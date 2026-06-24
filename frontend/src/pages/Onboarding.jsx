@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
 import { motion } from "framer-motion";
 import API from "../services/api";
+import MagneticButton from "../components/MagneticButton";
 
 const STEPS = [
   { key: "instagram", label: "Connect Instagram" },
@@ -74,13 +75,13 @@ export default function Onboarding({ status, onRefresh, onDone }) {
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 hero-glow">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="spotlight-card glass-card p-6 hero-glow">
         <p className="text-cyan uppercase tracking-[0.2em] text-xs mb-2">Onboarding Wizard</p>
         <h2 className="text-2xl font-bold">Connect your channels</h2>
         <p className="text-muted mt-2">Complete Instagram, X and LinkedIn to unlock automated multi-platform publishing.</p>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="glass-card p-6">
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="spotlight-card glass-card p-6">
         <div className="space-y-3 mb-6">
           {STEPS.map((s, i) => {
             const done = Boolean(status?.connected?.[s.key]);
@@ -97,9 +98,9 @@ export default function Onboarding({ status, onRefresh, onDone }) {
           <div className="space-y-3">
             <p className="text-sm text-cyan uppercase tracking-wider">Next step: twitter</p>
             <p className="text-muted text-sm">Connect your X account securely. No tokens to copy or paste.</p>
-            <button className="gradient-btn" onClick={connectTwitterOAuth} disabled={loading}>
+            <MagneticButton className="gradient-btn" onClick={connectTwitterOAuth} disabled={loading}>
               {loading ? "Redirecting..." : "Connect with X"}
-            </button>
+            </MagneticButton>
             {error ? <p className="text-red-400 text-sm">{error}</p> : null}
           </div>
         ) : nextPlatform ? (
@@ -125,9 +126,9 @@ export default function Onboarding({ status, onRefresh, onDone }) {
                 onChange={(e) => setForm({ ...form, platformId: e.target.value })}
               />
             ) : null}
-            <button className="gradient-btn" onClick={() => connect(nextPlatform)} disabled={loading}>
+            <MagneticButton className="gradient-btn" onClick={() => connect(nextPlatform)} disabled={loading}>
               {loading ? "Connecting..." : `Connect ${nextPlatform}`}
-            </button>
+            </MagneticButton>
             {error ? <p className="text-red-400 text-sm">{error}</p> : null}
           </div>
         ) : (

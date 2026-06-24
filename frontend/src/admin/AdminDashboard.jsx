@@ -14,6 +14,13 @@ import {
 } from "recharts";
 import API from "../services/api";
 import AnalyticsCard from "../components/AnalyticsCard";
+import TiltCard from "../components/TiltCard";
+
+const TOOLTIP_STYLE = {
+  contentStyle: { background: "#111827", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, color: "#E5E7EB" },
+  labelStyle: { color: "#9CA3AF" },
+  itemStyle: { color: "#E5E7EB" }
+};
 
 const PIE_COLORS = ["#7C3AED", "#06B6D4", "#10B981", "#EAB308"];
 
@@ -75,20 +82,20 @@ export default function AdminDashboard() {
         <>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <AnalyticsCard title="MRR" value={`₹${mrr}`} />
-        <AnalyticsCard title="Active Users" value={activeUsers} />
-        <AnalyticsCard title="Total Users" value={overview.totalUsers || 0} />
-        <AnalyticsCard title="Posts Today" value={overview.postsToday || 0} />
+        <TiltCard className="rounded-2xl"><AnalyticsCard title="MRR" value={`₹${mrr}`} /></TiltCard>
+        <TiltCard className="rounded-2xl"><AnalyticsCard title="Active Users" value={activeUsers} accentClassName="border-t-cyan" /></TiltCard>
+        <TiltCard className="rounded-2xl"><AnalyticsCard title="Total Users" value={overview.totalUsers || 0} accentClassName="border-t-success" /></TiltCard>
+        <TiltCard className="rounded-2xl"><AnalyticsCard title="Posts Today" value={overview.postsToday || 0} accentClassName="border-t-red-400" /></TiltCard>
       </div>
 
       <div className="grid md:grid-cols-3 gap-4">
-        <AnalyticsCard title="Likes" value={analytics.totalLikes || 0} />
-        <AnalyticsCard title="Comments" value={analytics.totalComments || 0} />
-        <AnalyticsCard title="Shares" value={analytics.totalShares || 0} />
+        <TiltCard className="rounded-2xl"><AnalyticsCard title="Likes" value={analytics.totalLikes || 0} /></TiltCard>
+        <TiltCard className="rounded-2xl"><AnalyticsCard title="Comments" value={analytics.totalComments || 0} accentClassName="border-t-cyan" /></TiltCard>
+        <TiltCard className="rounded-2xl"><AnalyticsCard title="Shares" value={analytics.totalShares || 0} accentClassName="border-t-success" /></TiltCard>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-4">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5 h-80 hero-glow">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="spotlight-card glass-card p-5 h-80 hero-glow">
           <p className="text-muted text-sm mb-4">Posts per day (last 14 days)</p>
           <ResponsiveContainer width="100%" height="90%">
             <AreaChart data={extra.postsPerDay || []}>
@@ -101,13 +108,13 @@ export default function AdminDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
               <XAxis dataKey="date" stroke="#9CA3AF" />
               <YAxis stroke="#9CA3AF" />
-              <Tooltip />
+              <Tooltip {...TOOLTIP_STYLE} />
               <Area type="monotone" dataKey="count" stroke="#7C3AED" fillOpacity={1} fill="url(#colorPosts)" />
             </AreaChart>
           </ResponsiveContainer>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07 }} className="glass-card p-5 h-80">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.07 }} className="spotlight-card glass-card p-5 h-80">
           <p className="text-muted text-sm mb-4">Platform engagement</p>
           <ResponsiveContainer width="100%" height="90%">
             <PieChart>
@@ -116,13 +123,13 @@ export default function AdminDashboard() {
                   <Cell key={entry.name} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip {...TOOLTIP_STYLE} />
             </PieChart>
           </ResponsiveContainer>
         </motion.div>
       </div>
 
-      <div className="glass-card p-5">
+      <div className="spotlight-card glass-card p-5">
         <p className="text-muted text-sm mb-3">Top performing posts</p>
         <div className="space-y-3">
           {(extra.topPerformingPosts || []).map((post, idx) => (

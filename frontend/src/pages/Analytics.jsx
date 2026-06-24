@@ -1,4 +1,5 @@
 import AnalyticsCard from "../components/AnalyticsCard";
+import TiltCard from "../components/TiltCard";
 import { motion } from "framer-motion";
 
 function countBy(items, fn) {
@@ -18,13 +19,21 @@ export default function Analytics({ items }) {
       <motion.h2 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-xl font-semibold">Analytics</motion.h2>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <AnalyticsCard title="Posted" value={statusMap.posted || 0} />
-        <AnalyticsCard title="Pending" value={statusMap.pending || 0} />
-        <AnalyticsCard title="Queued" value={statusMap.queued || 0} />
-        <AnalyticsCard title="Failed" value={statusMap.failed || 0} />
+        <TiltCard className="rounded-2xl">
+          <AnalyticsCard title="Posted" value={statusMap.posted || 0} accentClassName="border-t-success" />
+        </TiltCard>
+        <TiltCard className="rounded-2xl">
+          <AnalyticsCard title="Pending" value={statusMap.pending || 0} accentClassName="border-t-cyan" />
+        </TiltCard>
+        <TiltCard className="rounded-2xl">
+          <AnalyticsCard title="Queued" value={statusMap.queued || 0} accentClassName="border-t-accent" />
+        </TiltCard>
+        <TiltCard className="rounded-2xl">
+          <AnalyticsCard title="Failed" value={statusMap.failed || 0} accentClassName="border-t-red-400" />
+        </TiltCard>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5 hero-glow">
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="spotlight-card glass-card p-5 hero-glow">
         <p className="text-muted mb-2">Platform Distribution</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
           {Object.entries(platformMap).map(([k, v]) => (

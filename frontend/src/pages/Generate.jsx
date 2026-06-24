@@ -53,7 +53,7 @@ export default function Generate({ onCreated }) {
       ) : null}
 
       {result && !loading ? (
-        <motion.div initial={{ opacity: 0, y: 8, scale: 0.99 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="glass-card p-6">
+        <motion.div initial={{ opacity: 0, y: 8, scale: 0.99 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="spotlight-card glass-card p-6">
           <p className="text-sm text-cyan uppercase tracking-wide mb-2">Preview</p>
           <p className="text-lg font-semibold mb-4">{result.post?.idea}</p>
           <pre className="text-xs overflow-auto text-muted">{JSON.stringify(result.generated, null, 2)}</pre>

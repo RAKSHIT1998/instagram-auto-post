@@ -28,7 +28,7 @@ export default function PostCard({ item }) {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.012, y: -2 }}
       transition={{ duration: 0.2 }}
-      className="glass-card p-5"
+      className="spotlight-card glass-card p-5"
     >
       <div className="flex items-center justify-between mb-3">
         <p className="uppercase text-xs tracking-wider text-cyan">{item.platform}</p>

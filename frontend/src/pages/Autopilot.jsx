@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import API from "../services/api";
+import MagneticButton from "../components/MagneticButton";
 
 const CADENCE_OPTIONS = [
   { value: "daily", label: "Daily" },
@@ -51,7 +52,7 @@ export default function Autopilot({ hasConnectedPlatform }) {
 
   return (
     <div className="space-y-5">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 hero-glow">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="spotlight-card glass-card p-6 hero-glow">
         <h2 className="text-xl font-semibold mb-2">Autopilot</h2>
         <p className="text-muted text-sm mb-4">
           Set your niche, tone and posting cadence once. The system invents new topics and publishes them automatically from here on - no further input needed.
@@ -98,23 +99,23 @@ export default function Autopilot({ hasConnectedPlatform }) {
         </div>
 
         <div className="flex items-center gap-3 mt-4">
-          <button
+          <MagneticButton
             className="gradient-btn"
             disabled={saving || (!hasConnectedPlatform && !config.enabled) || !config.niche}
             onClick={() => save(!config.enabled)}
           >
             {saving ? "Saving..." : config.enabled ? "Disable autopilot" : "Enable autopilot"}
-          </button>
-          <button className="gradient-btn" disabled={saving || !config.enabled} onClick={() => save()}>
+          </MagneticButton>
+          <MagneticButton className="gradient-btn" disabled={saving || !config.enabled} onClick={() => save()}>
             Save settings
-          </button>
+          </MagneticButton>
         </div>
 
         {error ? <p className="text-red-400 mt-3 text-sm">{error}</p> : null}
       </motion.div>
 
       {config.enabled ? (
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 space-y-2 text-sm">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="spotlight-card glass-card p-6 space-y-2 text-sm">
           <p className="text-cyan uppercase tracking-wide text-xs">Status</p>
           <p>Last run: {config.lastRunAt ? new Date(config.lastRunAt).toLocaleString() : "Not yet run"}</p>
           <p>Next run: {config.nextRunAt ? new Date(config.nextRunAt).toLocaleString() : "Pending"}</p>
