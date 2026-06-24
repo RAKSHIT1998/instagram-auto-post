@@ -14,6 +14,7 @@ services:
       RUN_SCHEDULER: "false"
       RUN_ANALYTICS_CRON: "false"
       CORS_ORIGIN: http://localhost:5173
+      MONGODB_URI: mongodb://mongo:27017/social_ai
       MONGO_URI: mongodb://mongo:27017/social_ai
       REDIS_URL: redis://redis:6379
       ML_SERVICE_URL: http://ml:8000
@@ -29,6 +30,7 @@ services:
     env_file:
       - ./backend/.env
     environment:
+      MONGODB_URI: mongodb://mongo:27017/social_ai
       MONGO_URI: mongodb://mongo:27017/social_ai
       REDIS_URL: redis://redis:6379
       ML_SERVICE_URL: http://ml:8000

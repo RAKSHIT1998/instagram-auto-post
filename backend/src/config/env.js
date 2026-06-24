@@ -5,6 +5,14 @@ if (process.env.NODE_ENV !== "production") {
   dotenv.config();
 }
 
+// z.coerce.boolean() treats any non-empty string (including "false") as true,
+// so flags must be parsed from their literal string value instead.
+const boolEnv = (defaultValue) =>
+  z
+    .string()
+    .optional()
+    .transform((v) => (v === undefined ? defaultValue : !["false", "0", ""].includes(v.toLowerCase())));
+
 const envSchema = z.object({
   NODE_ENV: z.string().default("development"),
   PORT: z.coerce.number().default(5000),
@@ -15,9 +23,9 @@ const envSchema = z.object({
   JWT_SECRET: z.string().default("supersecret"),
   TOKEN_ENCRYPTION_KEY: z.string().optional(),
   ADMIN_EMAIL: z.string().optional(),
-  RUN_EMBEDDED_WORKER: z.coerce.boolean().default(true),
-  RUN_SCHEDULER: z.coerce.boolean().default(true),
-  RUN_ANALYTICS_CRON: z.coerce.boolean().default(true),
+  RUN_EMBEDDED_WORKER: boolEnv(true),
+  RUN_SCHEDULER: boolEnv(true),
+  RUN_ANALYTICS_CRON: boolEnv(true),
 
   HF_API_KEY: z.string().optional(),
   HF_TEXT_MODEL: z.string().default("mistralai/Mistral-7B-Instruct-v0.2"),
