@@ -9,22 +9,26 @@ function calcScore(metrics) {
 
 export function startAnalyticsCollector() {
   cron.schedule("0 * * * *", async () => {
-    const posts = await PlatformPost.find({ status: "posted" }).limit(500);
+    const posts = await PlatformPost.find({ status: "posted" }).populate("postId", "userId").limit(500);
 
     for (const post of posts) {
-      const metrics = await fetchMetrics(post);
-      const score = calcScore(metrics);
+      try {
+        const metrics = await fetchMetrics(post, post.postId?.userId);
+        const score = calcScore(metrics);
 
-       post.metrics = metrics;
-       await post.save();
+        post.metrics = metrics;
+        await post.save();
 
-      await Analytics.create({
-        postId: post.postId,
-        platformPostId: post._id,
-        platform: post.platform,
-        ...metrics,
-        score
-      });
+        await Analytics.create({
+          postId: post.postId?._id,
+          platformPostId: post._id,
+          platform: post.platform,
+          ...metrics,
+          score
+        });
+      } catch (error) {
+        console.error(`Analytics collection failed for platform post ${post._id}:`, error.message);
+      }
     }
   });
 

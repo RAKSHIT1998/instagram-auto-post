@@ -42,6 +42,12 @@ export default function Scheduled({ refreshKey, onItemsLoaded }) {
     load();
   }, [refreshKey]);
 
+  async function handleRetry(platformPostId) {
+    await API.post(`/publish/platform-posts/${platformPostId}/publish`);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await load();
+  }
+
   const filtered = items
     .filter((item) => {
       if (statusFilter === "all") return true;
@@ -108,7 +114,7 @@ export default function Scheduled({ refreshKey, onItemsLoaded }) {
         >
           {filtered.map((item) => (
             <motion.div key={item._id} variants={itemVariants}>
-              <PostCard item={item} />
+              <PostCard item={item} onRetry={handleRetry} />
             </motion.div>
           ))}
         </motion.div>

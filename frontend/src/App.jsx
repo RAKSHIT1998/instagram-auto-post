@@ -60,6 +60,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (view !== "app") return;
+    const interval = setInterval(() => loadPosts(), 8000);
+    return () => clearInterval(interval);
+  }, [view]);
+
+  async function retryPlatformPost(platformPostId) {
+    await API.post(`/publish/platform-posts/${platformPostId}/publish`);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await loadPosts();
+  }
+
+  useEffect(() => {
     let raf = 0;
 
     function onPointerMove(event) {
@@ -310,7 +322,17 @@ export default function App() {
                   <AdminDashboard />
                 </Suspense>
               ) : null}
-              {!isAdminPath && page === "dashboard" ? <Dashboard stats={stats} onGoGenerate={() => setPage("generate")} /> : null}
+              {!isAdminPath && page === "dashboard" ? (
+                <Dashboard
+                  stats={stats}
+                  items={items}
+                  integrationStatus={integrationStatus}
+                  onGoGenerate={() => setPage("generate")}
+                  onOpenIntegrations={() => setView("onboarding")}
+                  onOpenAutopilot={() => setPage("autopilot")}
+                  onRetry={retryPlatformPost}
+                />
+              ) : null}
               {!isAdminPath && page === "generate" ? <Generate onCreated={onCreated} /> : null}
               {!isAdminPath && page === "autopilot" ? (
                 <Autopilot hasConnectedPlatform={Object.values(integrationStatus?.connected || {}).some(Boolean)} />
