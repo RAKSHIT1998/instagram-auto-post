@@ -1,4 +1,5 @@
 import AnalyticsCard from "../components/AnalyticsCard";
+import TiltCard from "../components/TiltCard";
 import { motion } from "framer-motion";
 
 export default function Dashboard({ stats, onGoGenerate }) {
@@ -10,11 +11,24 @@ export default function Dashboard({ stats, onGoGenerate }) {
         <button onClick={onGoGenerate} className="gradient-btn">Generate AI 🚀</button>
       </motion.section>
 
-      <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <AnalyticsCard title="Total Posts" value={stats.totalPosts} />
-        <AnalyticsCard title="Posted" value={stats.posted} />
-        <AnalyticsCard title="Pending" value={stats.pending} />
-        <AnalyticsCard title="Failed" value={stats.failed} />
+      <motion.section
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+        className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4"
+      >
+        <TiltCard className="rounded-2xl">
+          <AnalyticsCard title="Total Posts" value={stats.totalPosts} accentClassName="border-t-accent" />
+        </TiltCard>
+        <TiltCard className="rounded-2xl">
+          <AnalyticsCard title="Posted" value={stats.posted} accentClassName="border-t-success" />
+        </TiltCard>
+        <TiltCard className="rounded-2xl">
+          <AnalyticsCard title="Pending" value={stats.pending} accentClassName="border-t-cyan" />
+        </TiltCard>
+        <TiltCard className="rounded-2xl">
+          <AnalyticsCard title="Failed" value={stats.failed} accentClassName="border-t-red-400" />
+        </TiltCard>
       </motion.section>
     </div>
   );

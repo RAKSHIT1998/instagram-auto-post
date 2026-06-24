@@ -23,7 +23,7 @@ function parseValue(value) {
   };
 }
 
-export default function AnalyticsCard({ title, value }) {
+export default function AnalyticsCard({ title, value, accentClassName = "border-t-accent" }) {
   const { numeric, prefix, suffix, animate } = useMemo(() => parseValue(value), [value]);
   const [display, setDisplay] = useState(animate ? 0 : value);
 
@@ -58,7 +58,7 @@ export default function AnalyticsCard({ title, value }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 120, damping: 14 }}
       whileHover={{ y: -4, scale: 1.01 }}
-      className="glass-card p-5"
+      className={`glass-card p-5 border-t-2 ${accentClassName}`}
     >
       <p className="text-muted text-sm">{title}</p>
       <h3 className="text-3xl font-bold font-mono mt-1">{display}</h3>

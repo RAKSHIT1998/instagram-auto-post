@@ -35,12 +35,19 @@ export default function Sidebar({ page, onChange, isAdmin }) {
               whileTap={{ scale: 0.98 }}
               key={item.key}
               onClick={() => onChange(item.key)}
-              className={`w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-3 ${
-                active ? "bg-white/10 text-white border border-accent/50" : "text-muted hover:text-white hover:bg-white/5"
+              className={`relative w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-3 ${
+                active ? "text-white" : "text-muted hover:text-white hover:bg-white/5"
               }`}
             >
-              <Icon size={18} />
-              {item.label}
+              {active ? (
+                <motion.div
+                  layoutId="sidebar-active-pill"
+                  className="absolute inset-0 rounded-xl bg-white/10 border border-accent/50"
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
+              ) : null}
+              <Icon size={18} className="relative z-10" />
+              <span className="relative z-10">{item.label}</span>
             </motion.button>
           );
         })}

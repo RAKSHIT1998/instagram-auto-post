@@ -78,7 +78,7 @@ export default function CommandPalette({ open, onClose, actions }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.18 }}
-            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[95vw] max-w-2xl glass-card p-3"
+            className="fixed top-20 left-1/2 -translate-x-1/2 z-50 w-[95vw] max-w-2xl spotlight-card glass-card p-3"
           >
             <div className="flex items-center gap-2 px-2 pb-2 border-b border-white/10">
               <Command size={16} className="text-cyan" />

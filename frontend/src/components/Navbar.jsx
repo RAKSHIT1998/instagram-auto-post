@@ -21,7 +21,7 @@ export default function Navbar({ user, onRegisterDemo, loading, onLogout, onOpen
             <motion.button whileHover={{ y: -1 }} onClick={onOpenOnboarding} className="px-4 py-2 text-sm rounded-xl border border-white/15 hover:border-accent transition">
               Integrations
             </motion.button>
-            <div className="glass-card px-4 py-2 text-sm">
+            <div className="spotlight-card glass-card px-4 py-2 text-sm">
               {user.email} <span className="text-cyan">• {user.plan}</span>
             </div>
             <motion.button whileHover={{ y: -1 }} onClick={onLogout} className="px-4 py-2 text-sm rounded-xl border border-white/15 hover:border-red-400 transition">

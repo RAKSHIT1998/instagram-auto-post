@@ -13,7 +13,7 @@ export default function QuickDock({ page, onChange, onOpenOnboarding }) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="fixed right-4 bottom-4 z-30 glass-card px-3 py-2 flex items-center gap-1"
+      className="fixed right-4 bottom-4 z-30 spotlight-card glass-card px-3 py-2 flex items-center gap-1"
     >
       {ACTIONS.map((action) => {
         const Icon = action.icon;
@@ -24,13 +24,20 @@ export default function QuickDock({ page, onChange, onOpenOnboarding }) {
             whileHover={{ y: -2 }}
             whileTap={{ scale: 0.96 }}
             onClick={() => onChange(action.key)}
-            className={`px-3 py-2 rounded-xl text-xs md:text-sm inline-flex items-center gap-2 ${
-              active ? "bg-white/15 text-white" : "text-muted hover:text-white hover:bg-white/10"
+            className={`relative px-3 py-2 rounded-xl text-xs md:text-sm inline-flex items-center gap-2 ${
+              active ? "text-white" : "text-muted hover:text-white hover:bg-white/10"
             }`}
             title={`${action.label} (${action.key[0].toUpperCase()})`}
           >
-            <Icon size={14} />
-            <span className="hidden md:inline">{action.label}</span>
+            {active ? (
+              <motion.div
+                layoutId="quickdock-active-pill"
+                className="absolute inset-0 rounded-xl bg-white/15"
+                transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              />
+            ) : null}
+            <Icon size={14} className="relative z-10" />
+            <span className="hidden md:inline relative z-10">{action.label}</span>
           </motion.button>
         );
       })}

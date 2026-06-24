@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import API from "../services/api";
+import MagneticButton from "../components/MagneticButton";
 
 export default function Generate({ onCreated }) {
   const [loading, setLoading] = useState(false);
@@ -28,16 +29,16 @@ export default function Generate({ onCreated }) {
 
   return (
     <div className="space-y-5">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 hero-glow">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="spotlight-card glass-card p-6 hero-glow">
         <h2 className="text-xl font-semibold mb-4">Generate AI Post</h2>
         <div className="grid md:grid-cols-3 gap-3">
           <input className="input-dark" placeholder="Topic" value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} />
           <input className="input-dark" placeholder="Niche" value={form.niche} onChange={(e) => setForm({ ...form, niche: e.target.value })} />
           <input className="input-dark" placeholder="Tone" value={form.tone} onChange={(e) => setForm({ ...form, tone: e.target.value })} />
         </div>
-        <button onClick={generate} className="gradient-btn mt-4" disabled={loading}>
+        <MagneticButton onClick={generate} className="gradient-btn mt-4" disabled={loading}>
           {loading ? "Generating..." : "Generate 🚀"}
-        </button>
+        </MagneticButton>
         {error ? <p className="text-red-400 mt-3 text-sm">{error}</p> : null}
       </motion.div>
 
