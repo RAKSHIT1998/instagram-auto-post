@@ -26,6 +26,7 @@ const envSchema = z.object({
   RUN_EMBEDDED_WORKER: boolEnv(true),
   RUN_SCHEDULER: boolEnv(true),
   RUN_ANALYTICS_CRON: boolEnv(true),
+  RUN_AUTOPILOT: boolEnv(true),
 
   HF_API_KEY: z.string().optional(),
   HF_TEXT_MODEL: z.string().default("mistralai/Mistral-7B-Instruct-v0.2"),
@@ -42,6 +43,10 @@ const envSchema = z.object({
   X_API_BASE: z.string().default("https://api.x.com/2"),
   X_BEARER_TOKEN: z.string().optional(),
   TWITTER_TOKEN: z.string().optional(),
+  X_CLIENT_ID: z.string().optional(),
+  X_CLIENT_SECRET: z.string().optional(),
+  X_OAUTH_REDIRECT_URI: z.string().optional(),
+  APP_BASE_URL: z.string().default("http://localhost:5173"),
 
   LINKEDIN_API_BASE: z.string().default("https://api.linkedin.com/v2"),
   LINKEDIN_ACCESS_TOKEN: z.string().optional(),

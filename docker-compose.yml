@@ -13,7 +13,9 @@ services:
       RUN_EMBEDDED_WORKER: "false"
       RUN_SCHEDULER: "false"
       RUN_ANALYTICS_CRON: "false"
+      RUN_AUTOPILOT: "false"
       CORS_ORIGIN: http://localhost:5173
+      APP_BASE_URL: http://localhost:5173
       MONGODB_URI: mongodb://mongo:27017/social_ai
       MONGO_URI: mongodb://mongo:27017/social_ai
       REDIS_URL: redis://redis:6379

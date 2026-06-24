@@ -45,6 +45,7 @@ Required:
 - TOKEN_ENCRYPTION_KEY
 - ADMIN_EMAIL
 - CORS_ORIGIN = https://<ai-social-frontend-service>.onrender.com
+- APP_BASE_URL = https://<ai-social-frontend-service>.onrender.com
 - ML_SERVICE_URL = https://<ai-social-ml-service>.onrender.com
 
 If using AI providers:
@@ -62,6 +63,12 @@ If publishing to social platforms:
 - TWITTER_TOKEN
 - LINKEDIN_TOKEN
 - LINKEDIN_URN
+
+For real one-click "Connect with X" (instead of pasting a TWITTER_TOKEN manually), see [X (Twitter) OAuth setup](#x-twitter-oauth-setup) below:
+
+- X_CLIENT_ID
+- X_CLIENT_SECRET
+- X_OAUTH_REDIRECT_URI = https://<ai-social-backend-service>.onrender.com/api/oauth/twitter/callback
 
 If charging users:
 
@@ -82,6 +89,19 @@ Set the same core runtime + integration variables used by backend:
 - IG_USER_ID, META_ACCESS_TOKEN, FB_PAGE_ID
 - TWITTER_TOKEN
 - LINKEDIN_TOKEN, LINKEDIN_URN
+- X_CLIENT_ID, X_CLIENT_SECRET (needed here too - the worker refreshes expired X tokens when publishing)
+
+### X (Twitter) OAuth setup
+
+Required for the "Connect with X" button (Onboarding) to work instead of manually pasting a token:
+
+1. Create a project + app at [developer.x.com](https://developer.x.com)
+2. In the app's "User authentication settings", enable OAuth 2.0, app type "Web App, Automated App or Bot"
+3. Set the callback URL to exactly `https://<ai-social-backend-service>.onrender.com/api/oauth/twitter/callback` (must match `X_OAUTH_REDIRECT_URI` byte-for-byte, including scheme and trailing slash)
+4. Request scopes: `tweet.read`, `tweet.write`, `users.read`, `offline.access` (the last one is required to receive a refresh token - without it, connected accounts disconnect after 2 hours)
+5. Copy the Client ID and Client Secret into `X_CLIENT_ID`/`X_CLIENT_SECRET` on both the backend and worker Render services
+
+Without these set, the "Connect with X" button returns a clear "not configured" error rather than failing silently - the app still runs and mock-publishes fine without them.
 
 ### frontend (ai-social-frontend)
 
@@ -126,7 +146,24 @@ Frontend SPA routing is already handled by a rewrite in [render.yaml](render.yam
 - Worker logs should show queued/posted jobs
 - `GET /api/posts/mine`
 
-## 7) Connect custom domain
+## 7) Turn on Autopilot (optional, fully autonomous posting)
+
+Once at least one platform is connected:
+
+`PUT /api/autopilot` (Bearer token)
+
+```json
+{
+  "niche": "fitness",
+  "tone": "bold",
+  "cadence": "daily",
+  "enabled": true
+}
+```
+
+The worker checks every 15 minutes for due configs, invents a fresh topic via AI, and runs it through the same generate-and-publish pipeline as a manual post - no further input needed. `GET /api/autopilot` shows `lastRunAt`/`lastError`/`recentTopics`. `POST /api/autopilot/run-now` triggers an immediate run without waiting for the next cron tick.
+
+## 8) Connect custom domain
 
 Render service -> Settings -> Custom Domains -> add domain.
 SSL is auto-enabled.

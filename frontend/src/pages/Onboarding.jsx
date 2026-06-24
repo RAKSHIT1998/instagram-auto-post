@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Circle } from "lucide-react";
 import { motion } from "framer-motion";
 import API from "../services/api";
@@ -13,6 +13,29 @@ export default function Onboarding({ status, onRefresh, onDone }) {
   const [form, setForm] = useState({ accountLabel: "", accessToken: "", platformId: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const oauthError = params.get("oauth_error");
+    if (oauthError) setError(oauthError);
+    if (oauthError || params.get("onboarding")) {
+      window.history.replaceState({}, "", window.location.pathname);
+      onRefresh();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function connectTwitterOAuth() {
+    setLoading(true);
+    setError("");
+    try {
+      const { data } = await API.get("/oauth/twitter/start");
+      window.location.href = data.authorizeUrl;
+    } catch (e) {
+      setError(e?.response?.data?.message || "Unable to start X connection");
+      setLoading(false);
+    }
+  }
 
   const nextPlatform = useMemo(() => STEPS.find((s) => !status?.connected?.[s.key])?.key || null, [status]);
 
@@ -70,7 +93,16 @@ export default function Onboarding({ status, onRefresh, onDone }) {
           })}
         </div>
 
-        {nextPlatform ? (
+        {nextPlatform === "twitter" ? (
+          <div className="space-y-3">
+            <p className="text-sm text-cyan uppercase tracking-wider">Next step: twitter</p>
+            <p className="text-muted text-sm">Connect your X account securely. No tokens to copy or paste.</p>
+            <button className="gradient-btn" onClick={connectTwitterOAuth} disabled={loading}>
+              {loading ? "Redirecting..." : "Connect with X"}
+            </button>
+            {error ? <p className="text-red-400 text-sm">{error}</p> : null}
+          </div>
+        ) : nextPlatform ? (
           <div className="space-y-3">
             <p className="text-sm text-cyan uppercase tracking-wider">Next step: {nextPlatform}</p>
             <input

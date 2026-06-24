@@ -10,10 +10,13 @@ import postRoutes from "./routes/postRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import waitlistRoutes from "./routes/waitlistRoutes.js";
 import integrationRoutes from "./routes/integrationRoutes.js";
+import oauthRoutes from "./routes/oauthRoutes.js";
+import autopilotRoutes from "./routes/autopilotRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import { initPublishWorker } from "./queue/publishQueue.js";
 import { startScheduler } from "./jobs/scheduler.js";
 import { startAnalyticsCollector } from "./jobs/analyticsCollector.js";
+import { startAutopilotScheduler } from "./jobs/autopilotScheduler.js";
 
 const app = express();
 
@@ -59,6 +62,8 @@ app.use("/api/posts", postRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/waitlist", waitlistRoutes);
 app.use("/api/integrations", integrationRoutes);
+app.use("/api/oauth", oauthRoutes);
+app.use("/api/autopilot", autopilotRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use((err, _req, res, _next) => {
@@ -79,6 +84,10 @@ export async function startServer() {
 
   if (env.RUN_ANALYTICS_CRON) {
     startAnalyticsCollector();
+  }
+
+  if (env.RUN_AUTOPILOT) {
+    startAutopilotScheduler();
   }
 
   app.listen(env.PORT, () => {

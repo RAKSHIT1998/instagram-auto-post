@@ -1,9 +1,10 @@
-import { BarChart3, Calendar, Home, Sparkles } from "lucide-react";
+import { BarChart3, Bot, Calendar, Home, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const items = [
   { key: "dashboard", label: "Dashboard", icon: Home },
   { key: "generate", label: "Generate", icon: Sparkles },
+  { key: "autopilot", label: "Autopilot", icon: Bot },
   { key: "scheduled", label: "Scheduled", icon: Calendar },
   { key: "analytics", label: "Analytics", icon: BarChart3 }
 ];

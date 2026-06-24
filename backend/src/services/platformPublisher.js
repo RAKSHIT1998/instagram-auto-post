@@ -4,13 +4,14 @@ import { publishToTwitter } from "./platforms/twitter.js";
 import { publishToLinkedIn } from "./platforms/linkedin.js";
 import { allowPlatformRequest } from "../utils/rateLimiter.js";
 import { getUserPlatformCredentials } from "./platformCredentials.js";
+import { ensureFreshCredentials } from "./tokenRefresh.js";
 
 export async function publishToPlatform(platform, payload, { userId } = {}) {
   if (!allowPlatformRequest(platform)) {
     throw new Error(`Rate limit reached for ${platform}`);
   }
 
-  const credentials = userId ? await getUserPlatformCredentials(userId, platform) : null;
+  let credentials = userId ? await getUserPlatformCredentials(userId, platform) : null;
 
   if (userId && !credentials) {
     throw new Error(`No connected ${platform} credentials found for this user`);
@@ -18,6 +19,10 @@ export async function publishToPlatform(platform, payload, { userId } = {}) {
 
   if (userId && !credentials.accessToken) {
     throw new Error(`Missing ${platform} access token for this user`);
+  }
+
+  if (userId) {
+    credentials = await ensureFreshCredentials(platform, credentials, userId);
   }
 
   switch (platform) {

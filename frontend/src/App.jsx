@@ -6,6 +6,7 @@ import QuickDock from "./components/QuickDock";
 import CommandPalette from "./components/CommandPalette";
 import Dashboard from "./pages/Dashboard";
 import Generate from "./pages/Generate";
+import Autopilot from "./pages/Autopilot";
 import Scheduled from "./pages/Scheduled";
 import Analytics from "./pages/Analytics";
 import Landing from "./pages/Landing";
@@ -197,6 +198,12 @@ export default function App() {
           run: () => setPage("generate")
         },
         {
+          id: "go-autopilot",
+          label: "Open Autopilot",
+          keywords: ["automatic", "autonomous", "schedule"],
+          run: () => setPage("autopilot")
+        },
+        {
           id: "go-scheduled",
           label: "Open Scheduled",
           hint: "S",
@@ -305,6 +312,9 @@ export default function App() {
               ) : null}
               {!isAdminPath && page === "dashboard" ? <Dashboard stats={stats} onGoGenerate={() => setPage("generate")} /> : null}
               {!isAdminPath && page === "generate" ? <Generate onCreated={onCreated} /> : null}
+              {!isAdminPath && page === "autopilot" ? (
+                <Autopilot hasConnectedPlatform={Object.values(integrationStatus?.connected || {}).some(Boolean)} />
+              ) : null}
               {!isAdminPath && page === "scheduled" ? <Scheduled refreshKey={refreshKey} onItemsLoaded={setItems} /> : null}
               {!isAdminPath && page === "analytics" ? <Analytics items={items} /> : null}
             </motion.div>

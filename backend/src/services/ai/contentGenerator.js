@@ -42,6 +42,52 @@ async function callHFModel(model, prompt) {
   throw new Error("Unexpected model response format");
 }
 
+function buildTopicInventionPrompt({ niche, tone, audience, goal, recentTopics }) {
+  const avoid = (recentTopics || []).slice(-15).join(" | ") || "None yet";
+  return `You are a viral content strategist for a fully autonomous social media posting system.
+
+Invent ONE fresh, specific, scroll-stopping content topic/idea for the following brand:
+- Niche: ${niche}
+- Tone: ${tone || "bold"}
+- Target Audience: ${audience || "General digital audience"}
+- Goal: ${goal || "engagement"}
+
+RULES:
+- The topic must be a single concrete idea, not a generic theme (e.g. "Why most people fail at consistency by day 3" not "consistency").
+- Do NOT repeat or closely resemble any of these recently used topics: ${avoid}
+- Make it timely, specific, and emotionally resonant for the niche.
+- Output ONLY the topic as a single plain-text sentence. No quotes, no explanation, no formatting.`;
+}
+
+export async function generateAutopilotTopic({ niche, tone, audience, goal, recentTopics }) {
+  const prompt = buildTopicInventionPrompt({ niche, tone, audience, goal, recentTopics });
+
+  try {
+    const primary = await callHFModel(env.HF_TEXT_MODEL, prompt);
+    const cleaned = primary.trim().replace(/^["']|["']$/g, "").split("\n")[0];
+    if (!cleaned) throw new Error("Empty topic from primary model");
+    return cleaned;
+  } catch (error) {
+    try {
+      if (!env.HF_FALLBACK_TEXT_MODEL) throw error;
+      const fallback = await callHFModel(env.HF_FALLBACK_TEXT_MODEL, prompt);
+      const cleaned = fallback.trim().replace(/^["']|["']$/g, "").split("\n")[0];
+      if (!cleaned) throw new Error("Empty topic from fallback model");
+      return cleaned;
+    } catch {
+      const fallbackTopics = [
+        `The one habit most people in ${niche} get wrong`,
+        `What nobody tells you about getting started in ${niche}`,
+        `A simple ${niche} mindset shift that changes everything`,
+        `Why consistency beats talent in ${niche}`,
+        `The biggest myth about ${niche} success`
+      ];
+      const unused = fallbackTopics.find((t) => !(recentTopics || []).includes(t));
+      return unused || `${niche} insight #${Date.now()}`;
+    }
+  }
+}
+
 export async function generateMultiPlatformContent({
   topic,
   idea,

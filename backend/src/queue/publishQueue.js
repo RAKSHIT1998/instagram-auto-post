@@ -1,5 +1,8 @@
 import { Queue, Worker } from "bullmq";
 import PlatformPost from "../models/PlatformPost.js";
+// Registers the "Post" model with Mongoose - required for the .populate("postId") call
+// below to work in any process (e.g. the dedicated worker) that doesn't otherwise import it.
+import "../models/Post.js";
 import { createRedisConnection } from "../config/redis.js";
 import { publishToPlatform } from "../services/platformPublisher.js";
 
